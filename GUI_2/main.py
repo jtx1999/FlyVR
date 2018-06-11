@@ -8,7 +8,7 @@ from random import randint
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from GUI_2.Arduino import init_camera, stop_camera
+from GUI_2.Arduino import ArduinoControl
 import subprocess
 import os
 
@@ -23,13 +23,14 @@ class Fly(GridLayout):
         self.add_widget(self.btn2)
 
     def start(self, instance):
-        init_camera()
+        self.arduino = ArduinoControl()
+        self.arduino.init_camera()
         #subprocess.check_call(['..\FicTrac', 'config.txt'], cwd="C:/FicTracWin64/setup_test")
         #subprocess.run('cd "C:\\FicTracWin64\\setup_test"')
         #subprocess.run("..\FicTrac config.txt")
 
     def stop(self, instance):
-        stop_camera()
+        self.arduino.stop_camera()
 
 
 class FlyVRApp(App):

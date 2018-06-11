@@ -1,16 +1,28 @@
 import serial
-ser = serial.Serial(port="COM5", baudrate=9600)
 
 
-def init_camera():
+class ArduinoControl(object):
     """
-    Start the experiment
+    Class to control the Arduino board
     """
-    ser.write('1'.encode())
+
+    def __init__(self, port="COM3", baudrate=9600):
+
+        self.ser = serial.Serial(port=port, baudrate=baudrate)
+
+    def init_camera(self):
+        """
+        Start the experiment
+        """
+        self.ser.write('1'.encode())
+
+    def stop_camera(self):
+        """
+        End the experiment
+        """
+        self.ser.write('0'.encode())
 
 
-def stop_camera():
-    """
-    End the experiment
-    """
-    ser.write('0'.encode())
+if __name__ == '__main__':
+    arduino = ArduinoControl()
+    arduino.init_camera()
