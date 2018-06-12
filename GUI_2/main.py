@@ -14,6 +14,7 @@ from random import randint
 
 from GUI_2.Arduino import ArduinoControl
 import subprocess
+from subprocess import PIPE
 import os
 import serial
 
@@ -60,7 +61,7 @@ class Fly(BoxLayout):
             self.arduino.init_camera()
 
         wd1 = "C:\\Users\\YLab\\Documents\\FlyVR\\FicTracWin64\\fictrac_example_test"
-        subprocess.run(['..\\FicTrac.exe', 'config.txt'], cwd=wd1, shell=True)
+        subprocess.Popen(['..\\FicTrac.exe', 'config.txt'], cwd=wd1, shell=True)
         #subprocess.run('cd "C:\\FicTracWin64\\setup_test"')
         #subprocess.run("..\FicTrac config.txt")
 
