@@ -18,18 +18,21 @@ import os
 import serial
 
 
-class Fly(GridLayout):
+class Fly(BoxLayout):
     def __init__(self, **kwargs):
-        super(Fly, self).__init__(**kwargs)
-        self.cols = 2
+        super(Fly, self).__init__(orientation='vertical', **kwargs)
+        self.lyt1 = BoxLayout(orientation='horizontal')
+        self.lyt2 = BoxLayout(orientation='horizontal')
         self.textinput = TextInput(text="COM3", multiline=False)
-        self.add_widget(self.textinput)
+        self.lyt1.add_widget(self.textinput)
         self.btn0 = Button(text="Set port", on_press=self.setSerial)
-        self.add_widget(self.btn0)
+        self.lyt1.add_widget(self.btn0)
+        self.add_widget(self.lyt1)
         self.btn1 = Button(text="Start", on_press=self.startCam)
-        self.add_widget(self.btn1)
+        self.lyt2.add_widget(self.btn1)
         self.btn2 = Button(text="Stop", on_press=self.stopCam)
-        self.add_widget(self.btn2)
+        self.lyt2.add_widget(self.btn2)
+        self.add_widget(self.lyt2)
         self.serial = False  # The serial port is not set
 
 
@@ -48,19 +51,31 @@ class Fly(GridLayout):
 
 
     def startCam(self, instance):
+        """
+        Start the experiment
+        """
         if not self.serial:
             self.setSerial()
         if self.serial:
             self.arduino.init_camera()
-        #subprocess.check_call(['..\FicTrac', 'config.txt'], cwd="C:/FicTracWin64/setup_test")
+
+        wd1 = "C:\\Users\\YLab\\Documents\\FlyVR\\FicTracWin64\\fictrac_example_test"
+        subprocess.run(['..\\FicTrac.exe', 'config.txt'], cwd=wd1, shell=True)
         #subprocess.run('cd "C:\\FicTracWin64\\setup_test"')
         #subprocess.run("..\FicTrac config.txt")
 
     def stopCam(self, instance):
+        """
+        Stop the experiment
+        """
+
         if self.serial:
             self.arduino.stop_camera()
 
     def popupError(self, title, message):
+        """
+        Pop up a window with the title and message
+        """
         layout = GridLayout(cols=1, padding=10)
         popupLabel = Label(text=message)
         closeButton = Button(text="Close", size_hint=(1, 0.3))
