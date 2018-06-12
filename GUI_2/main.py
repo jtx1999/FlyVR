@@ -29,6 +29,8 @@ class Fly(BoxLayout):
         self.btn0 = Button(text="Set port", on_press=self.setSerial)
         self.lyt1.add_widget(self.btn0)
         self.add_widget(self.lyt1)
+        self.btn3 = Button(text="Config", on_press=self.setConfig)
+        self.lyt1.add_widget(self.btn3)
         self.btn1 = Button(text="Start", on_press=self.startCam)
         self.lyt2.add_widget(self.btn1)
         self.btn2 = Button(text="Stop", on_press=self.stopCam)
@@ -87,6 +89,13 @@ class Fly(BoxLayout):
                       size_hint=(None, None), size=(400, 400))
         popup.open()
         closeButton.bind(on_release=popup.dismiss)
+
+    def setConfig(self, instance=None):
+        """
+        Set the configuration of FicTrac
+        """
+        wd1 = "C:\\Users\\YLab\\Documents\\FlyVR\\FicTracWin64\\fictrac_example_test"
+        subprocess.Popen(['notepad', 'config.txt'], stdout=PIPE, stderr=PIPE, cwd=wd1)
 
 
 class FlyVRApp(App):
