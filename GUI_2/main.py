@@ -6,6 +6,7 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
+from kivy.uix.filechooser import FileChooserIconView
 from kivy.properties import NumericProperty, ReferenceListProperty
 from kivy.vector import Vector
 from kivy.clock import Clock
@@ -17,6 +18,7 @@ import subprocess
 from subprocess import PIPE
 import os
 import serial
+import signal
 
 
 class Fly(BoxLayout):
@@ -37,6 +39,8 @@ class Fly(BoxLayout):
         self.lyt2.add_widget(self.btn2)
         self.add_widget(self.lyt2)
         self.serial = False  # The serial port is not set
+        self.vizPath = "C:\\Vizard5\\bin\\winviz.exe"
+        self.vizScriptPath = "C:\\FicTracWin64\\fictrac_example_test\\gallery.py"
 
 
     def setSerial(self, instance=None, port=None):
@@ -62,8 +66,10 @@ class Fly(BoxLayout):
         if self.serial:
             self.arduino.init_camera()
 
+        subprocess.Popen([self.vizPath, self.vizScriptPath], shell=True)
+
         wd1 = "C:\\Users\\YLab\\Documents\\FlyVR\\FicTracWin64\\fictrac_example_test"
-        subprocess.Popen(['..\\FicTrac.exe', 'config.txt'], cwd=wd1, shell=True)
+        self.proc = subprocess.Popen(['..\\FicTrac.exe', 'config.txt'], cwd=wd1, shell=True)
         #subprocess.run('cd "C:\\FicTracWin64\\setup_test"')
         #subprocess.run("..\FicTrac config.txt")
 
@@ -71,6 +77,17 @@ class Fly(BoxLayout):
         """
         Stop the experiment
         """
+        # TODO: kill the process
+        #os.killpg(pro.pid, signal.SIGTERM)
+        #os.killpg(self.proc.pid, signal.SIGINT)
+        # pid = self.proc.pid
+        # try:
+        #     os.killpg(pid, signal.SIGINT)
+        #     self.proc.kill()
+        #     print("Forced kill")
+        # except OSError:
+        #     print("Terminated gracefully")
+        #os.killpg(os.getpgid(self.proc.pid))
 
         if self.serial:
             self.arduino.stop_camera()
