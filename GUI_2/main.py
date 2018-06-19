@@ -24,14 +24,21 @@ import signal
 class Fly(BoxLayout):
     def __init__(self, **kwargs):
         super(Fly, self).__init__(orientation='vertical', **kwargs)
+        self.lyt0 = BoxLayout(orientation='horizontal')
         self.lyt1 = BoxLayout(orientation='horizontal')
         self.lyt2 = BoxLayout(orientation='horizontal')
+        self.btn4 = Button(text="Set FicTrac Path")
+        self.btn5 = Button(text="Set Vizard Path")
+        self.lyt0.add_widget(self.btn4)
+        self.lyt0.add_widget(self.btn5)
+        self.add_widget(self.lyt0)
+
         self.textinput = TextInput(text="COM3", multiline=False)
         self.lyt1.add_widget(self.textinput)
         self.btn0 = Button(text="Set port", on_press=self.setSerial)
         self.lyt1.add_widget(self.btn0)
         self.add_widget(self.lyt1)
-        self.btn3 = Button(text="Config", on_press=self.setConfig)
+        self.btn3 = Button(text="FicTrac Config", on_press=self.setConfig)
         self.lyt1.add_widget(self.btn3)
         self.btn1 = Button(text="Start", on_press=self.startCam)
         self.lyt2.add_widget(self.btn1)
