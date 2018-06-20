@@ -48,18 +48,22 @@ FicTrac_state.trace("w", setFicTracState)
 labelframe_FicTrac = LabelFrame(tab_record, text="FicTrac")
 labelframe_FicTrac.pack(fill="both", expand="no")
 
-FicTrac_state_box = Checkbutton(labelframe_FicTrac, text="Enable FicTrac", var=FicTrac_state)
+FicTrac_frame_1 = Frame(labelframe_FicTrac)
+FicTrac_frame_1.pack(fill=X)
+FicTrac_state_box = Checkbutton(FicTrac_frame_1, text="Enable FicTrac", var=FicTrac_state)
 FicTrac_state_box.grid(column=0, row=0)
 
-FicTrac_path_label = Label(labelframe_FicTrac, text="FicTrac path")
+FicTrac_frame_2 = Frame(labelframe_FicTrac)
+FicTrac_frame_2.pack(fill=X)
+FicTrac_path_label = Label(FicTrac_frame_2, text="FicTrac path", width=15)
 FicTrac_path_label.grid(column=0, row=1)
-FicTrac_path_text = Entry(labelframe_FicTrac, width=50, textvariable=FicTrac_path_string)
+FicTrac_path_text = Entry(FicTrac_frame_2, width=50, textvariable=FicTrac_path_string)
 FicTrac_path_text.grid(column=1, row=1)
-FicTrac_path_button = Button(labelframe_FicTrac, text="Browse..", command=setFicTracPath)
-FicTrac_path_button.grid(column=2, row=1)
+FicTrac_path_button = Button(FicTrac_frame_2, text="Browse..", command=setFicTracPath)
+FicTrac_path_button.grid(column=2, row=1, padx=5, pady=5)
 
 FicTrac_config_button = Button(labelframe_FicTrac, text="Config FicTrac")
-FicTrac_config_button.grid(column=0, row=2)
+FicTrac_config_button.pack()
 
 # Viard
 Vizard_path_string = StringVar()
@@ -74,6 +78,18 @@ def setVizardPath():
         Vizard_path_string.set(path)
 
 
+Vizard_script_string = StringVar()
+
+
+def setScriptPath():
+    """
+    Function to open a file chooser and browse a file
+    """
+    path = filedialog.askopenfilename(title="Set Vizard Script Path", filetypes=(("Python files", "*.py"), ("All files", "*.*")))
+    if path != "":
+        Vizard_script_string.set(path)
+
+
 def setVizardState(*args):
     """
     Enable or disable FicTrac according to FicTrac_state
@@ -81,9 +97,13 @@ def setVizardState(*args):
     if Vizard_state.get():
         Vizard_path_text.config(state=NORMAL)
         Vizard_path_button.config(state=NORMAL)
+        Vizard_script_text.config(state=NORMAL)
+        Vizard_script_button.config(state=NORMAL)
     else:
         Vizard_path_text.config(state=DISABLED)
         Vizard_path_button.config(state=DISABLED)
+        Vizard_script_text.config(state=DISABLED)
+        Vizard_script_button.config(state=DISABLED)
 
 
 labelframe_Vizard = LabelFrame(tab_record, text="Vizard")
@@ -94,15 +114,26 @@ Vizard_state = BooleanVar()
 Vizard_state.set(True)  # Initialized as true
 Vizard_state.trace("w", setVizardState)
 
-Vizard_state_box = Checkbutton(labelframe_Vizard, text="Enable Vizard", var=Vizard_state)
+Vizard_frame_1 = Frame(labelframe_Vizard)
+Vizard_frame_1.pack(fill=X)
+Vizard_state_box = Checkbutton(Vizard_frame_1, text="Enable Vizard", var=Vizard_state)
 Vizard_state_box.grid(column=0, row=0)
 
-Vizard_path_label = Label(labelframe_Vizard, text="Vizard path")
-Vizard_path_label.grid(column=0, row=1)
-Vizard_path_text = Entry(labelframe_Vizard, width=50, textvariable=Vizard_path_string)
-Vizard_path_text.grid(column=1, row=1)
-Vizard_path_button = Button(labelframe_Vizard, text="Browse..", command=setVizardPath)
-Vizard_path_button.grid(column=2, row=1)
+Vizard_frame_2 = Frame(labelframe_Vizard)
+Vizard_frame_2.pack(fill=X)
+Vizard_path_label = Label(Vizard_frame_2, text="Vizard path", width=15)
+Vizard_path_label.grid(column=0, row=0)
+Vizard_path_text = Entry(Vizard_frame_2, width=50, textvariable=Vizard_path_string)
+Vizard_path_text.grid(column=1, row=0)
+Vizard_path_button = Button(Vizard_frame_2, text="Browse..", command=setVizardPath)
+Vizard_path_button.grid(column=2, row=0, padx=5)
+
+Vizard_script_label = Label(Vizard_frame_2, text="Script path", width=15)
+Vizard_script_label.grid(column=0, row=1)
+Vizard_script_text = Entry(Vizard_frame_2, width=50, textvariable=Vizard_script_string)
+Vizard_script_text.grid(column=1, row=1)
+Vizard_script_button = Button(Vizard_frame_2, text="Browse..", command=setScriptPath)
+Vizard_script_button.grid(column=2, row=1, padx=5, pady=5)
 
 
 # Camera
@@ -141,15 +172,19 @@ Arduino_state = BooleanVar()
 Arduino_state.set(True)  # Initialized as true
 Arduino_state.trace("w", setArduinoState)
 
-Arduino_state_box = Checkbutton(labelframe_camera, text="Use Arduino board to control cameras", var=Arduino_state)
+camera_frame_1 = Frame(labelframe_camera)
+camera_frame_1.pack(fill=X)
+Arduino_state_box = Checkbutton(camera_frame_1, text="Use Arduino board to control cameras", var=Arduino_state)
 Arduino_state_box.grid(column=0, row=0)
 
-Arduino_port_label = Label(labelframe_camera, text="Serial port")
+camera_frame_2 = Frame(labelframe_camera)
+camera_frame_2.pack(fill=X)
+Arduino_port_label = Label(camera_frame_2, text="Serial port", width=15)
 Arduino_port_label.grid(column=0, row=1)
-Arduino_port_text = Entry(labelframe_camera, width=10, textvariable=Arduino_port_string)
+Arduino_port_text = Entry(camera_frame_2, width=10, textvariable=Arduino_port_string)
 Arduino_port_text.grid(column=1, row=1)
-Arduino_port_button = Button(labelframe_camera, text="Set port", command=setArduinoPort)
-Arduino_port_button.grid(column=2, row=1)
+Arduino_port_button = Button(camera_frame_2, text="Set port", command=setArduinoPort)
+Arduino_port_button.grid(column=2, row=1, padx=5, pady=5)
 
 # Experiment
 def startExperiment():
@@ -181,10 +216,10 @@ labelframe_experiment = LabelFrame(tab_record, text="Experiment Control")
 labelframe_experiment.pack(fill="both", expand="yes")
 start_button = Button(labelframe_experiment, text="Start", bg="green", font=("Arial", 30),
                       command=startExperiment)
-start_button.pack(side=LEFT)
+start_button.pack(side=LEFT, padx=10, pady=5)
 stop_button = Button(labelframe_experiment, text="Stop", bg="red", font=("Arial", 30),
                      command=stopExperiment)
-stop_button.pack(side=LEFT)
+stop_button.pack(side=LEFT, padx=10, pady=5)
 
 
 tab_control.pack(expand=1, fill='both')
