@@ -1,6 +1,9 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+from tkinter import messagebox
+from GUI_3.Arduino import ArduinoControl
+import serial
 
 window = Tk()
 window.title("FlyVR")
@@ -101,15 +104,88 @@ Vizard_path_text.grid(column=1, row=1)
 Vizard_path_button = Button(labelframe_Vizard, text="Browse..", command=setVizardPath)
 Vizard_path_button.grid(column=2, row=1)
 
-#Camera
+
+# Camera
+def setArduinoState(*args):
+    """
+    Enable or disable FicTrac according to FicTrac_state
+    """
+    if Arduino_state.get():
+        Arduino_port_text.config(state=NORMAL)
+        Arduino_port_button.config(state=NORMAL)
+    else:
+        Arduino_port_text.config(state=DISABLED)
+        Arduino_port_button.config(state=DISABLED)
+
+
+def setArduinoPort():
+    """
+    Set the serial port for Arduino
+    """
+    try:
+        arduino = ArduinoControl(port=Arduino_port_string.get())
+        serial_set = True
+        messagebox.showinfo("Success", "Serial port is set successfully")
+    except serial.serialutil.SerialException:
+        messagebox.showerror("Error", "The port "+Arduino_port_string.get()+" is not found")
+
+
+serial_set = False  # Flag to show if serial is set
+Arduino_port_string = StringVar()
+Arduino_port_string.set("COM3")  # Initialized as COM3
 labelframe_camera = LabelFrame(tab_record, text="Camera Control")
 labelframe_camera.pack(fill="both", expand="no")
-left = Label(labelframe_camera, text="Inside the Camera LabelFrame")
-left.pack()
 
-#Experiment
+
+Arduino_state = BooleanVar()
+Arduino_state.set(True)  # Initialized as true
+Arduino_state.trace("w", setArduinoState)
+
+Arduino_state_box = Checkbutton(labelframe_camera, text="Use Arduino board to control cameras", var=Arduino_state)
+Arduino_state_box.grid(column=0, row=0)
+
+Arduino_port_label = Label(labelframe_camera, text="Serial port")
+Arduino_port_label.grid(column=0, row=1)
+Arduino_port_text = Entry(labelframe_camera, width=10, textvariable=Arduino_port_string)
+Arduino_port_text.grid(column=1, row=1)
+Arduino_port_button = Button(labelframe_camera, text="Set port", command=setArduinoPort)
+Arduino_port_button.grid(column=2, row=1)
+
+# Experiment
+def startExperiment():
+    """
+    Start the entire experiment
+    """
+    if Arduino_state.get():  # Arduino is enabled
+        if not serial_set:  # Try to set arduino if not set yet
+            setArduinoPort()
+        if serial_set:  # Serial is set
+            arduino.init_camera()
+        else:  # Try to set arduino port but failed
+            return
+
+    # TODO: start the experiment
+
+
+def stopExperiment():
+    """
+    Stop the entire experiment
+    """
+    if serial_set:
+        arduino.stop_camera()
+
+    # TODO: stop the experiment
+
+
 labelframe_experiment = LabelFrame(tab_record, text="Experiment Control")
 labelframe_experiment.pack(fill="both", expand="yes")
+start_button = Button(labelframe_experiment, text="Start", bg="green", font=("Arial", 30),
+                      command=startExperiment)
+start_button.pack(side=LEFT)
+stop_button = Button(labelframe_experiment, text="Stop", bg="red", font=("Arial", 30),
+                     command=stopExperiment)
+stop_button.pack(side=LEFT)
+
 
 tab_control.pack(expand=1, fill='both')
 window.mainloop()
