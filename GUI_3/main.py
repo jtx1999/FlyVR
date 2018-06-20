@@ -4,6 +4,9 @@ from tkinter import filedialog
 from tkinter import messagebox
 from GUI_3.Arduino import ArduinoControl
 import serial
+import subprocess
+from subprocess import PIPE
+import time
 
 window = Tk()
 window.title("FlyVR")
@@ -198,6 +201,16 @@ def startExperiment():
             arduino.init_camera()
         else:  # Try to set arduino port but failed
             return
+    if Vizard_state.get():  # Vizard is enabled
+        subprocess.Popen(["python", "C:\\Users\\YLab\\Documents\\FlyVR\\GUI_3\\StartVizard.py",
+                          Vizard_path_string.get(), Vizard_script_string.get()], shell=True)
+        # p = subprocess.Popen([Vizard_path_string.get(), Vizard_script_string.get()], shell=True,
+        #                      stdout=PIPE, stderr=PIPE)
+        # output, error = p.communicate()
+        # if p.returncode != 0:  # Failed to start Vizard
+        #     messagebox.showerror("Error",
+        #                          "Vizard is not configured properly:\n"+output.decode("utf-8")+error.decode("utf-8"))
+        #     return
 
     # TODO: start the experiment
 
@@ -208,7 +221,8 @@ def stopExperiment():
     """
     if serial_set:
         arduino.stop_camera()
-
+    if Vizard_state.get():
+        pass
     # TODO: stop the experiment
 
 
