@@ -19,7 +19,25 @@ tab_analysis = ttk.Frame(tab_control)
 tab_control.add(tab_record, text="Record")
 tab_control.add(tab_analysis, text="Analysis")
 
+
+def isProperFile(path, filetype):
+    """
+    Checks if the file is the file type wanted, pop up an error message if no
+    :param path: the path of the file
+    :param filetype: the file type wanted
+    :return: True if the path is correct, False otherwise
+    """
+    l = len(filetype)
+    if (type(path) == str) and (path[-l:] == filetype):
+        return True
+    else:
+        messagebox.showerror("Error", "The selected file\n"+path+"\nis illegal."+"\n."+filetype+" file required")
+        return False
+
+
 FicTrac_path_string = StringVar()
+FicTrac_configPath_string = StringVar()
+
 
 def setFicTracPath():
     """
@@ -35,13 +53,36 @@ def setFicTracState(*args):
     Enable or disable FicTrac according to FicTrac_state
     """
     if FicTrac_state.get():
-        FicTrac_config_button.config(state=NORMAL)
         FicTrac_path_text.config(state=NORMAL)
         FicTrac_path_button.config(state=NORMAL)
+        FicTrac_configPath_text.config(state=NORMAL)
+        FicTrac_configPath_button.config(state=NORMAL)
+        FicTrac_configOpen_button.config(state=NORMAL)
     else:
-        FicTrac_config_button.config(state=DISABLED)
         FicTrac_path_text.config(state=DISABLED)
         FicTrac_path_button.config(state=DISABLED)
+        FicTrac_configPath_text.config(state=DISABLED)
+        FicTrac_configPath_button.config(state=DISABLED)
+        FicTrac_configOpen_button.config(state=DISABLED)
+
+
+def setFicTracConfigPath(*args):
+    """
+    Function to open a file chooser and browse a file
+    """
+    path = filedialog.askopenfilename(title="Set FicTrac Configuration Path",
+                                      filetypes=(("Text documents", "*.txt"), ("All files", "*.*")))
+    if path != "":
+        FicTrac_configPath_string.set(path)
+
+
+def openFicTracConfig(*args):
+    """
+    Open the FicTrac config file,
+    Require a text file, otherwise popup an error
+    """
+    if isProperFile(FicTrac_configPath_string.get(), "txt"):
+        subprocess.Popen(["notepad", FicTrac_configPath_string.get()], shell=True)
 
 
 FicTrac_state = BooleanVar()
@@ -63,10 +104,16 @@ FicTrac_path_label.grid(column=0, row=1)
 FicTrac_path_text = Entry(FicTrac_frame_2, width=50, textvariable=FicTrac_path_string)
 FicTrac_path_text.grid(column=1, row=1)
 FicTrac_path_button = Button(FicTrac_frame_2, text="Browse..", command=setFicTracPath)
-FicTrac_path_button.grid(column=2, row=1, padx=5, pady=5)
+FicTrac_path_button.grid(column=2, row=1)
 
-FicTrac_config_button = Button(labelframe_FicTrac, text="Config FicTrac")
-FicTrac_config_button.pack()
+FicTrac_configPath_label = Label(FicTrac_frame_2, text="Config path", width=15)
+FicTrac_configPath_label.grid(column=0, row=2)
+FicTrac_configPath_text = Entry(FicTrac_frame_2, width=50, textvariable=FicTrac_configPath_string)
+FicTrac_configPath_text.grid(column=1, row=2)
+FicTrac_configPath_button = Button(FicTrac_frame_2, text="Browse..", command=setFicTracConfigPath)
+FicTrac_configPath_button.grid(column=2, row=2, padx=5, pady=5)
+FicTrac_configOpen_button = Button(FicTrac_frame_2, text="Open config", command=openFicTracConfig)
+FicTrac_configOpen_button.grid(column=3, row=2, padx=5, pady=5)
 
 # Viard
 Vizard_path_string = StringVar()
@@ -102,11 +149,24 @@ def setVizardState(*args):
         Vizard_path_button.config(state=NORMAL)
         Vizard_script_text.config(state=NORMAL)
         Vizard_script_button.config(state=NORMAL)
+        Vizard_start_button.config(state=NORMAL)
     else:
         Vizard_path_text.config(state=DISABLED)
         Vizard_path_button.config(state=DISABLED)
         Vizard_script_text.config(state=DISABLED)
         Vizard_script_button.config(state=DISABLED)
+        Vizard_start_button.config(state=DISABLED)
+
+
+def startVizard(*args):
+    """
+    Start Vizard before the experiment starts,
+    so that the user can adjust the display ,etc.
+    """
+    if (isProperFile(Vizard_path_string.get(), "exe")) and \
+            (isProperFile(Vizard_script_string.get(), "py")):  # Vizard is enabled
+        subprocess.Popen(["python", "C:\\Users\\YLab\\Documents\\FlyVR\\GUI_3\\StartVizard.py",
+                          Vizard_path_string.get(), Vizard_script_string.get()], shell=True)
 
 
 labelframe_Vizard = LabelFrame(tab_record, text="Vizard")
@@ -137,6 +197,9 @@ Vizard_script_text = Entry(Vizard_frame_2, width=50, textvariable=Vizard_script_
 Vizard_script_text.grid(column=1, row=1)
 Vizard_script_button = Button(Vizard_frame_2, text="Browse..", command=setScriptPath)
 Vizard_script_button.grid(column=2, row=1, padx=5, pady=5)
+
+Vizard_start_button = Button(Vizard_frame_2, text="Start Vizard", command=startVizard)
+Vizard_start_button.grid(column=0, row=2, padx=5, pady=5)
 
 
 # Camera
@@ -228,10 +291,15 @@ def stopExperiment():
 
 labelframe_experiment = LabelFrame(tab_record, text="Experiment Control")
 labelframe_experiment.pack(fill="both", expand="yes")
-start_button = Button(labelframe_experiment, text="Start", bg="green", font=("Arial", 30),
+
+experiment_frame_1 = Frame(labelframe_experiment)
+experiment_frame_1.pack(fill=X)
+experiment_frame_2 = Frame(labelframe_experiment)
+experiment_frame_2.pack(fill=X)
+start_button = Button(experiment_frame_2, text="Start", bg="green", font=("Arial", 30),
                       command=startExperiment)
 start_button.pack(side=LEFT, padx=10, pady=5)
-stop_button = Button(labelframe_experiment, text="Stop", bg="red", font=("Arial", 30),
+stop_button = Button(experiment_frame_2, text="Stop", bg="red", font=("Arial", 30),
                      command=stopExperiment)
 stop_button.pack(side=LEFT, padx=10, pady=5)
 
