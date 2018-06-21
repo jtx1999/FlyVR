@@ -317,6 +317,42 @@ time_dropdown = OptionMenu(experiment_frame_1, time_unit_string, "frames", "ms",
 time_dropdown.grid(column=2, row=0, padx=5, pady=5)
 time_unit_label = Label(experiment_frame_1, text="* Specify zero to capture until manually stopped")
 time_unit_label.grid(column=3, row=0)
+# TODO: timing
+
+
+def loadConfig(*args):
+    """
+    Load the configuration of the program
+    """
+    pass  # TODO: Load config
+
+
+def saveConfig(*args):
+    """
+    Save the configuration of this program
+    """
+    pass  # TODO: Save config
+
+
+def About(*args):
+    """
+    Show the about window
+    """
+    pass  # TODO: About window
+
+
+menu = Menu(window)
+window.config(menu=menu)
+filemenu = Menu(menu, tearoff=False)
+menu.add_cascade(label="File", menu=filemenu)
+filemenu.add_command(label="Load Configuration...")
+filemenu.add_command(label="Save Configuration...")
+filemenu.add_separator()
+filemenu.add_command(label="Exit", command=window.quit)
+
+helpmenu = Menu(menu, tearoff=False)
+menu.add_cascade(label="Help", menu=helpmenu)
+helpmenu.add_command(label="About...")
 
 tab_control.pack(expand=1, fill='both')
 window.mainloop()
