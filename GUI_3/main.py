@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
-from GUI_3.Arduino import ArduinoControl
+from Arduino import ArduinoControl
 import serial
 import subprocess
 from subprocess import PIPE
@@ -10,7 +10,7 @@ import time
 
 window = Tk()
 window.title("FlyVR")
-window.iconbitmap("C:\\Users\\YLab\\Documents\\FlyVR\\GUI_3\\fly-shape.ico")
+window.iconbitmap("fly-shape.ico")
 window.geometry('600x800')
 
 tab_control = ttk.Notebook(window)
@@ -265,7 +265,7 @@ def startExperiment():
         else:  # Try to set arduino port but failed
             return
     if Vizard_state.get():  # Vizard is enabled
-        subprocess.Popen(["python", "C:\\Users\\YLab\\Documents\\FlyVR\\GUI_3\\StartVizard.py",
+        subprocess.Popen(["python", "StartVizard.py",
                           Vizard_path_string.get(), Vizard_script_string.get()], shell=True)
         # p = subprocess.Popen([Vizard_path_string.get(), Vizard_script_string.get()], shell=True,
         #                      stdout=PIPE, stderr=PIPE)
@@ -340,7 +340,7 @@ def About(*args):
     """
     about = Tk()
     about.wm_title("About")
-    about.wm_iconbitmap("C:\\Users\\YLab\\Documents\\FlyVR\\GUI_3\\fly-shape.ico")
+    about.wm_iconbitmap("fly-shape.ico")
     about_label = Label(about, text="The FlyVR software\nVersion 1.0\nCreated by Tianxing")
     about_label.pack(side=TOP, fill=X, pady=10, padx=50)
     about_button = ttk.Button(about, text="Okay", command=about.destroy)
