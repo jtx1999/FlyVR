@@ -289,6 +289,11 @@ def stopExperiment():
     # TODO: stop the experiment
 
 
+time_string = StringVar()
+time_string.set(0)
+time_unit_string = StringVar()
+time_unit_string.set("frames")
+
 labelframe_experiment = LabelFrame(tab_record, text="Experiment Control")
 labelframe_experiment.pack(fill="both", expand="yes")
 
@@ -296,6 +301,7 @@ experiment_frame_1 = Frame(labelframe_experiment)
 experiment_frame_1.pack(fill=X)
 experiment_frame_2 = Frame(labelframe_experiment)
 experiment_frame_2.pack(fill=X)
+
 start_button = Button(experiment_frame_2, text="Start", bg="green", font=("Arial", 30),
                       command=startExperiment)
 start_button.pack(side=LEFT, padx=10, pady=5)
@@ -303,6 +309,14 @@ stop_button = Button(experiment_frame_2, text="Stop", bg="red", font=("Arial", 3
                      command=stopExperiment)
 stop_button.pack(side=LEFT, padx=10, pady=5)
 
+time_label = Label(experiment_frame_1, text="Record for")
+time_label.grid(column=0, row=0, padx=5, pady=5)
+time_text = Entry(experiment_frame_1, width=10, textvariable=time_string)
+time_text.grid(column=1, row=0, pady=5)
+time_dropdown = OptionMenu(experiment_frame_1, time_unit_string, "frames", "ms", "sec", "min")
+time_dropdown.grid(column=2, row=0, padx=5, pady=5)
+time_unit_label = Label(experiment_frame_1, text="* Specify zero to capture until manually stopped")
+time_unit_label.grid(column=3, row=0)
 
 tab_control.pack(expand=1, fill='both')
 window.mainloop()
