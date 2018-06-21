@@ -31,7 +31,7 @@ def isProperFile(path, filetype):
     if (type(path) == str) and (path[-l:] == filetype):
         return True
     else:
-        messagebox.showerror("Error", "The selected file\n"+path+"\nis illegal."+"\n."+filetype+" file required")
+        messagebox.showerror("Error", "The selected file "+path+"\nis illegal."+"\n."+filetype+" file required")
         return False
 
 
@@ -94,25 +94,25 @@ labelframe_FicTrac.pack(fill="both", expand="no")
 
 FicTrac_frame_1 = Frame(labelframe_FicTrac)
 FicTrac_frame_1.pack(fill=X)
-FicTrac_state_box = Checkbutton(FicTrac_frame_1, text="Enable FicTrac", var=FicTrac_state)
-FicTrac_state_box.grid(column=0, row=0)
+FicTrac_state_box = ttk.Checkbutton(FicTrac_frame_1, text="Enable FicTrac", var=FicTrac_state)
+FicTrac_state_box.grid(column=0, row=0, padx=5)
 
 FicTrac_frame_2 = Frame(labelframe_FicTrac)
 FicTrac_frame_2.pack(fill=X)
 FicTrac_path_label = Label(FicTrac_frame_2, text="FicTrac path", width=15)
 FicTrac_path_label.grid(column=0, row=1)
-FicTrac_path_text = Entry(FicTrac_frame_2, width=50, textvariable=FicTrac_path_string)
+FicTrac_path_text = ttk.Entry(FicTrac_frame_2, width=50, textvariable=FicTrac_path_string)
 FicTrac_path_text.grid(column=1, row=1)
-FicTrac_path_button = Button(FicTrac_frame_2, text="Browse..", command=setFicTracPath)
+FicTrac_path_button = ttk.Button(FicTrac_frame_2, text="Browse..", command=setFicTracPath)
 FicTrac_path_button.grid(column=2, row=1)
 
 FicTrac_configPath_label = Label(FicTrac_frame_2, text="Config path", width=15)
 FicTrac_configPath_label.grid(column=0, row=2)
-FicTrac_configPath_text = Entry(FicTrac_frame_2, width=50, textvariable=FicTrac_configPath_string)
+FicTrac_configPath_text = ttk.Entry(FicTrac_frame_2, width=50, textvariable=FicTrac_configPath_string)
 FicTrac_configPath_text.grid(column=1, row=2)
-FicTrac_configPath_button = Button(FicTrac_frame_2, text="Browse..", command=setFicTracConfigPath)
+FicTrac_configPath_button = ttk.Button(FicTrac_frame_2, text="Browse..", command=setFicTracConfigPath)
 FicTrac_configPath_button.grid(column=2, row=2, padx=5, pady=5)
-FicTrac_configOpen_button = Button(FicTrac_frame_2, text="Open config", command=openFicTracConfig)
+FicTrac_configOpen_button = ttk.Button(FicTrac_frame_2, text="Open config", command=openFicTracConfig)
 FicTrac_configOpen_button.grid(column=3, row=2, padx=5, pady=5)
 
 # Viard
@@ -179,26 +179,26 @@ Vizard_state.trace("w", setVizardState)
 
 Vizard_frame_1 = Frame(labelframe_Vizard)
 Vizard_frame_1.pack(fill=X)
-Vizard_state_box = Checkbutton(Vizard_frame_1, text="Enable Vizard", var=Vizard_state)
-Vizard_state_box.grid(column=0, row=0)
+Vizard_state_box = ttk.Checkbutton(Vizard_frame_1, text="Enable Vizard", var=Vizard_state)
+Vizard_state_box.grid(column=0, row=0, padx=5)
 
 Vizard_frame_2 = Frame(labelframe_Vizard)
 Vizard_frame_2.pack(fill=X)
 Vizard_path_label = Label(Vizard_frame_2, text="Vizard path", width=15)
 Vizard_path_label.grid(column=0, row=0)
-Vizard_path_text = Entry(Vizard_frame_2, width=50, textvariable=Vizard_path_string)
+Vizard_path_text = ttk.Entry(Vizard_frame_2, width=50, textvariable=Vizard_path_string)
 Vizard_path_text.grid(column=1, row=0)
-Vizard_path_button = Button(Vizard_frame_2, text="Browse..", command=setVizardPath)
+Vizard_path_button = ttk.Button(Vizard_frame_2, text="Browse..", command=setVizardPath)
 Vizard_path_button.grid(column=2, row=0, padx=5)
 
 Vizard_script_label = Label(Vizard_frame_2, text="Script path", width=15)
 Vizard_script_label.grid(column=0, row=1)
-Vizard_script_text = Entry(Vizard_frame_2, width=50, textvariable=Vizard_script_string)
+Vizard_script_text = ttk.Entry(Vizard_frame_2, width=50, textvariable=Vizard_script_string)
 Vizard_script_text.grid(column=1, row=1)
-Vizard_script_button = Button(Vizard_frame_2, text="Browse..", command=setScriptPath)
+Vizard_script_button = ttk.Button(Vizard_frame_2, text="Browse..", command=setScriptPath)
 Vizard_script_button.grid(column=2, row=1, padx=5, pady=5)
 
-Vizard_start_button = Button(Vizard_frame_2, text="Start Vizard", command=startVizard)
+Vizard_start_button = ttk.Button(Vizard_frame_2, text="Start Vizard", command=startVizard)
 Vizard_start_button.grid(column=0, row=2, padx=5, pady=5)
 
 
@@ -240,16 +240,16 @@ Arduino_state.trace("w", setArduinoState)
 
 camera_frame_1 = Frame(labelframe_camera)
 camera_frame_1.pack(fill=X)
-Arduino_state_box = Checkbutton(camera_frame_1, text="Use Arduino board to control cameras", var=Arduino_state)
-Arduino_state_box.grid(column=0, row=0)
+Arduino_state_box = ttk.Checkbutton(camera_frame_1, text="Use Arduino board to control cameras", var=Arduino_state)
+Arduino_state_box.grid(column=0, row=0, padx=5)
 
 camera_frame_2 = Frame(labelframe_camera)
 camera_frame_2.pack(fill=X)
 Arduino_port_label = Label(camera_frame_2, text="Serial port", width=15)
 Arduino_port_label.grid(column=0, row=1)
-Arduino_port_text = Entry(camera_frame_2, width=10, textvariable=Arduino_port_string)
+Arduino_port_text = ttk.Entry(camera_frame_2, width=10, textvariable=Arduino_port_string)
 Arduino_port_text.grid(column=1, row=1)
-Arduino_port_button = Button(camera_frame_2, text="Set port", command=setArduinoPort)
+Arduino_port_button = ttk.Button(camera_frame_2, text="Set port", command=setArduinoPort)
 Arduino_port_button.grid(column=2, row=1, padx=5, pady=5)
 
 # Experiment
@@ -302,18 +302,18 @@ experiment_frame_1.pack(fill=X)
 experiment_frame_2 = Frame(labelframe_experiment)
 experiment_frame_2.pack(fill=X)
 
-start_button = Button(experiment_frame_2, text="Start", bg="green", font=("Arial", 30),
+start_button = ttk.Button(experiment_frame_2, text="Start",
                       command=startExperiment)
 start_button.pack(side=LEFT, padx=10, pady=5)
-stop_button = Button(experiment_frame_2, text="Stop", bg="red", font=("Arial", 30),
+stop_button = ttk.Button(experiment_frame_2, text="Stop",
                      command=stopExperiment)
 stop_button.pack(side=LEFT, padx=10, pady=5)
 
 time_label = Label(experiment_frame_1, text="Record for")
 time_label.grid(column=0, row=0, padx=5, pady=5)
-time_text = Entry(experiment_frame_1, width=10, textvariable=time_string)
+time_text = ttk.Entry(experiment_frame_1, width=10, textvariable=time_string)
 time_text.grid(column=1, row=0, pady=5)
-time_dropdown = OptionMenu(experiment_frame_1, time_unit_string, "frames", "ms", "sec", "min")
+time_dropdown = ttk.OptionMenu(experiment_frame_1, time_unit_string, "frames", "frames", "ms", "sec", "min")
 time_dropdown.grid(column=2, row=0, padx=5, pady=5)
 time_unit_label = Label(experiment_frame_1, text="* Specify zero to capture until manually stopped")
 time_unit_label.grid(column=3, row=0)
@@ -338,21 +338,29 @@ def About(*args):
     """
     Show the about window
     """
-    pass  # TODO: About window
+    about = Tk()
+    about.wm_title("About")
+    about.wm_iconbitmap("C:\\Users\\YLab\\Documents\\FlyVR\\GUI_3\\fly-shape.ico")
+    about_label = Label(about, text="The FlyVR software\nVersion 1.0\nCreated by Tianxing")
+    about_label.pack(side=TOP, fill=X, pady=10, padx=50)
+    about_button = ttk.Button(about, text="Okay", command=about.destroy)
+    about_button.pack(pady=5)
+    about.resizable(False, False)
+    about.mainloop()
 
 
 menu = Menu(window)
 window.config(menu=menu)
 filemenu = Menu(menu, tearoff=False)
 menu.add_cascade(label="File", menu=filemenu)
-filemenu.add_command(label="Load Configuration...")
-filemenu.add_command(label="Save Configuration...")
+filemenu.add_command(label="Load Configuration...", command=loadConfig)
+filemenu.add_command(label="Save Configuration...", command=saveConfig)
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
 helpmenu = Menu(menu, tearoff=False)
 menu.add_cascade(label="Help", menu=helpmenu)
-helpmenu.add_command(label="About...")
+helpmenu.add_command(label="About...", command=About)
 
 tab_control.pack(expand=1, fill='both')
 window.mainloop()
