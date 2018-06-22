@@ -325,7 +325,8 @@ filelist = []
 
 def selectcsvFile():
     """
-    Function to open a file chooser and browse a file
+    Function to open a file chooser and browse files
+    Then write the file names to the selected files text box
     """
     path = filedialog.askopenfilenames(title="Import files", filetypes=(("csv files", "*.csv"), ("All files", "*.*")))
     if path == "":
@@ -336,8 +337,10 @@ def selectcsvFile():
     for filename in window.tk.splitlist(path):
         filelist.append(filename)
         filestr += (filename+"\n")
+    select_file_textbox.config(state=NORMAL)
     select_file_textbox.delete("1.0", END)
     select_file_textbox.insert("1.0", filestr)
+    select_file_textbox.config(state=DISABLED)
 
 
 labelframe_select = LabelFrame(tab_analysis, text="Import .csv files")
@@ -369,6 +372,7 @@ select_file_scrollx.grid(row=1, column=0, sticky="ew")
 select_file_scrolly.config(command=select_file_textbox.yview)
 select_file_scrollx.config(command=select_file_textbox.xview)
 select_file_textbox.config(yscrollcommand=select_file_scrolly.set, xscrollcommand=select_file_scrollx.set)
+select_file_textbox.config(state=DISABLED)
 select_frame_3.grid_rowconfigure(0, weight=1)
 select_frame_3.grid_columnconfigure(0, weight=1)
 
