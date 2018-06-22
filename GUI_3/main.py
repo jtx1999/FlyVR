@@ -7,6 +7,8 @@ import serial
 import subprocess
 from subprocess import PIPE
 import time
+import os
+
 
 window = Tk()
 window.title("FlyVR")
@@ -343,6 +345,27 @@ def selectcsvFile():
     select_file_textbox.config(state=DISABLED)
 
 
+def selectFolder():
+    """
+    Function to open a file chooser and browse files
+    Then write the file names to the selected files text box
+    """
+    path = filedialog.askdirectory(title="Import Folder")
+    if path == "":
+        return
+    global filelist
+    filelist = []
+    filestr = ""
+    for filename in os.listdir(path):
+        if ".csv" in filename:
+            filelist.append(path+filename)
+            filestr += (path+filename+"\n")
+    select_file_textbox.config(state=NORMAL)
+    select_file_textbox.delete("1.0", END)
+    select_file_textbox.insert("1.0", filestr)
+    select_file_textbox.config(state=DISABLED)
+
+
 labelframe_select = LabelFrame(tab_analysis, text="Import .csv files")
 labelframe_select.pack(fill="both", expand="no")
 
@@ -351,7 +374,7 @@ select_frame_1.pack(fill=X, padx=5, pady=5)
 
 select_file_button = ttk.Button(select_frame_1, text="Select File(s)", command=selectcsvFile)
 select_file_button.grid(column=0, row=0, padx=10)
-select_folder_button = ttk.Button(select_frame_1, text="Select Folder")
+select_folder_button = ttk.Button(select_frame_1, text="Select Folder", command=selectFolder)
 select_folder_button.grid(column=1, row=0, padx=10)
 
 select_frame_2 = Frame(labelframe_select)
