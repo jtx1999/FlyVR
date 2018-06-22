@@ -320,6 +320,70 @@ time_unit_label.grid(column=3, row=0)
 # TODO: timing
 
 
+filelist = []
+
+
+def selectcsvFile():
+    """
+    Function to open a file chooser and browse a file
+    """
+    path = filedialog.askopenfilenames(title="Import files", filetypes=(("csv files", "*.csv"), ("All files", "*.*")))
+    if path == "":
+        return
+    global filelist
+    filelist = []
+    filestr = ""
+    for filename in window.tk.splitlist(path):
+        filelist.append(filename)
+        filestr += (filename+"\n")
+    select_file_textbox.delete("1.0", END)
+    select_file_textbox.insert("1.0", filestr)
+
+
+labelframe_select = LabelFrame(tab_analysis, text="Import .csv files")
+labelframe_select.pack(fill="both", expand="no")
+
+select_frame_1 = Frame(labelframe_select)
+select_frame_1.pack(fill=X, padx=5, pady=5)
+
+select_file_button = ttk.Button(select_frame_1, text="Select File(s)", command=selectcsvFile)
+select_file_button.grid(column=0, row=0, padx=10)
+select_folder_button = ttk.Button(select_frame_1, text="Select Folder")
+select_folder_button.grid(column=1, row=0, padx=10)
+
+select_frame_2 = Frame(labelframe_select)
+select_frame_2.pack(fill=X)
+
+select_file_label = ttk.Label(select_frame_2, text="Selected Files:")
+select_file_label.grid(column=0, row=0, padx=5)
+
+
+select_frame_3 = Frame(labelframe_select)
+select_frame_3.pack(fill=X, padx=5, pady=5)
+select_file_scrolly = Scrollbar(select_frame_3)
+select_file_scrollx = Scrollbar(select_frame_3, orient=HORIZONTAL)
+select_file_textbox = Text(select_frame_3, height=5, wrap=NONE)  # No word wrap
+select_file_textbox.grid(row=0, column=0, sticky="nsew")
+select_file_scrolly.grid(row=0, column=1, sticky="ns")
+select_file_scrollx.grid(row=1, column=0, sticky="ew")
+select_file_scrolly.config(command=select_file_textbox.yview)
+select_file_scrollx.config(command=select_file_textbox.xview)
+select_file_textbox.config(yscrollcommand=select_file_scrolly.set, xscrollcommand=select_file_scrollx.set)
+select_frame_3.grid_rowconfigure(0, weight=1)
+select_frame_3.grid_columnconfigure(0, weight=1)
+
+
+labelframe_plot = LabelFrame(tab_analysis, text="Plotting")
+labelframe_plot.pack(fill="both", expand="no")
+button = ttk.Button(labelframe_plot, text="Plot Graph")
+button.pack()
+
+
+labelframe_export = LabelFrame(tab_analysis, text="Export to Excel")
+labelframe_export.pack(fill="both", expand="yes")
+
+
+
 def loadConfig(*args):
     """
     Load the configuration of the program
