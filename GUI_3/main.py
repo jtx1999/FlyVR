@@ -330,7 +330,7 @@ def selectcsvFile():
     Function to open a file chooser and browse files
     Then write the file names to the selected files text box
     """
-    path = filedialog.askopenfilenames(title="Import files", filetypes=(("csv files", "*.csv"), ("All files", "*.*")))
+    path = filedialog.askopenfilenames(title="Import files", filetypes=(("CSV files", "*.csv"), ("All files", "*.*")))
     if path == "":
         return
     global filelist
@@ -366,7 +366,7 @@ def selectFolder():
     select_file_textbox.config(state=DISABLED)
 
 
-labelframe_select = LabelFrame(tab_analysis, text="Import .csv files")
+labelframe_select = LabelFrame(tab_analysis, text="Import CSV files")
 labelframe_select.pack(fill="both", expand="no")
 
 select_frame_1 = Frame(labelframe_select)
@@ -399,11 +399,119 @@ select_file_textbox.config(state=DISABLED)
 select_frame_3.grid_rowconfigure(0, weight=1)
 select_frame_3.grid_columnconfigure(0, weight=1)
 
+SCATTER = 1
+BOX = 2
+plot_type = SCATTER
+
+
+def plot_select_scatter(selected=True, *args):
+    """
+    When the scatter plot button is selected, display scatter plot options,
+    and disable the options of other plots
+    :param selected: true if scatter plot is selected, false otherwise
+    """
+    if selected:
+        plot_type = SCATTER
+        plot_selection_button_1.config(relief=SUNKEN)
+        plot_select_box(False)
+    else:
+        plot_selection_button_1.config(relief=RAISED)
+
+
+def plot_select_box(selected=True, *args):
+    """
+    When the scatter plot button is selected, display scatter plot options,
+    and disable the options of other plots
+    :param selected: true if scatter plot is selected, false otherwise
+    """
+    if selected:
+        plot_type = BOX
+        plot_selection_button_2.config(relief=SUNKEN)
+        plot_select_scatter(False)
+    else:
+        plot_selection_button_2.config(relief=RAISED)
+
 
 labelframe_plot = LabelFrame(tab_analysis, text="Plotting")
 labelframe_plot.pack(fill="both", expand="no")
-button = ttk.Button(labelframe_plot, text="Plot Graph")
-button.pack()
+plot_frame_1 = Frame(labelframe_plot)
+plot_frame_1.pack(fill=X)
+
+plot_selection_button_1 = Button(plot_frame_1, text="Scatter Plot", command=plot_select_scatter)
+plot_selection_button_1.grid(column=0, row=0, padx=5, pady=5)
+plot_selection_button_2 = Button(plot_frame_1, text="Box Plot", command=plot_select_box)
+plot_selection_button_2.grid(column=1, row=0, padx=5, pady=5)
+
+plot_frame_2 = Frame(labelframe_plot)
+plot_frame_2.pack(fill=X)
+
+plot_axisx_string = StringVar()
+plot_axisy_string = StringVar()
+plot_axisx_caption_string = StringVar()
+plot_axisy_caption_string = StringVar()
+plot_title_string = StringVar()
+
+plot_axisx_label = ttk.Label(plot_frame_2, text="x-axis:")
+plot_axisy_label = ttk.Label(plot_frame_2, text="y-axis:")
+plot_axisx_drop = ttk.OptionMenu(plot_frame_2, plot_axisx_string, "Time(s)", "Time(s)", "Time(frames)")
+plot_axisy_drop = ttk.OptionMenu(plot_frame_2, plot_axisy_string, "y-axis")
+plot_axisx_caption = ttk.Label(plot_frame_2, text="Caption:")
+plot_axisy_caption = ttk.Label(plot_frame_2, text="Caption:")
+plot_axisx_text = ttk.Entry(plot_frame_2, width=20, textvariable=plot_axisx_caption_string)
+plot_axisy_text = ttk.Entry(plot_frame_2, width=20, textvariable=plot_axisy_caption_string)
+plot_axisx_label.grid(column=0, row=0)
+plot_axisy_label.grid(column=0, row=1)
+plot_axisx_drop.grid(column=1, row=0)
+plot_axisy_drop.grid(column=1, row=1)
+plot_axisx_caption.grid(column=2, row=0)
+plot_axisy_caption.grid(column=2, row=1)
+plot_axisx_text.grid(column=3, row=0)
+plot_axisy_text.grid(column=3, row=1)
+
+plot_frame_3 = Frame(labelframe_plot)
+plot_frame_3.pack(fill=X)
+plot_title_label = ttk.Label(plot_frame_3, text="Title:")
+plot_title_label.grid(column=0, row=0)
+plot_title_text = ttk.Entry(plot_frame_3, width=40, textvariable=plot_title_string)
+plot_title_text.grid(column=1, row=0)
+
+plot_frame_4 = Frame(labelframe_plot)
+plot_frame_4.pack(fill=X)
+plot_preview_button = ttk.Button(plot_frame_4, text="Preview")
+plot_preview_button.pack(side=LEFT)
+plot_next_button = ttk.Button(plot_frame_4, text="Next")
+plot_next_button.pack(side=RIGHT)
+plot_prev_button = ttk.Button(plot_frame_4, text="Prev")
+plot_prev_button.pack(side=RIGHT)
+
+plot_frame_5 = Frame(labelframe_plot)
+plot_frame_5.pack(fill=X)
+canvas = Canvas(plot_frame_5, width=400, height=300)
+canvas.pack()
+
+
+plot_format_string = StringVar()
+plot_size_width_string = StringVar()
+plot_size_width_string.set("800")
+plot_size_height_string = StringVar()
+plot_size_height_string.set("600")
+
+plot_frame_6 = Frame(labelframe_plot)
+plot_frame_6.pack(fill=X)
+plot_format_label = ttk.Label(plot_frame_6, text="Format:")
+plot_format_drop = ttk.OptionMenu(plot_frame_6, plot_format_string, "png", "png", "jpg")
+plot_size_label = ttk.Label(plot_frame_6, text="Size:")
+plot_size_text_1 = ttk.Entry(plot_frame_6, width=6, textvariable=plot_size_width_string)
+plot_size_label_2 = ttk.Label(plot_frame_6, text="x")
+plot_size_text_2 = ttk.Entry(plot_frame_6, width=6, textvariable=plot_size_height_string)
+plot_export_button = ttk.Button(plot_frame_6, text="Export plots...")
+plot_export_button.pack(side=RIGHT)
+plot_size_text_2.pack(side=RIGHT)
+plot_size_label_2.pack(side=RIGHT)
+plot_size_text_1.pack(side=RIGHT)
+plot_size_label.pack(side=RIGHT)
+plot_format_drop.pack(side=RIGHT)
+plot_format_label.pack(side=RIGHT)
 
 
 labelframe_export = LabelFrame(tab_analysis, text="Export to Excel")
