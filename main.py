@@ -13,8 +13,8 @@ from plot_helper import PlotHelper
 
 window = Tk()
 window.title("FlyVR")
-window.iconbitmap("fly-shape.ico")
-window.geometry('600x800')
+window.iconbitmap("C:\\Users\\YLab\\Documents\\FlyVR\\fly-shape.ico")
+window.geometry("600x800")
 
 tab_control = ttk.Notebook(window)
 tab_record = ttk.Frame(tab_control)
@@ -526,6 +526,8 @@ def next_plot():
 
 def save_plot():
     path = filedialog.askdirectory(title="Save in folder")
+    if path == "":  # No path is selected
+        return
     fig_size = (plot_size_width_string.get(), plot_size_height_string.get())
     plot_helper.save_file(path, extension=plot_format_string.get(), size=fig_size,
                           x=0, y=18, xc=plot_axisx_caption_string.get(), yc=plot_axisy_caption_string.get(),
