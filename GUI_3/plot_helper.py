@@ -1,9 +1,11 @@
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 import pandas as pd
 import numpy as np
-
+import os
 import tkinter as tk
 
 INDEX_DICT = {
@@ -73,7 +75,7 @@ class PlotHelper(object):
         X = self._read_file(self.file_list[self.index], 0)  # TODO: optimization, don't open file twice
         Y = self._read_file(self.file_list[self.index], y)
         fig = Figure(figsize=(4, 3))
-        ax = fig.add_axes([0, 0, 1, 1])
+        ax = fig.add_axes([0.12, 0.15, 0.8, 0.75])
         ax.plot(X, Y)
         ax.set_xlabel(xc)
         ax.set_ylabel(yc)
@@ -93,7 +95,7 @@ class PlotHelper(object):
         result = np.array(ds[:, col])
         return result
 
-    def save_file(self, path, extension, size):
+    def save_file(self, path, extension, size, x, y, xc, yc, title):
         """
         Method to save images in the given directory
 
@@ -102,4 +104,30 @@ class PlotHelper(object):
         :param size: List or tuple, The size of the image, e.g. (800, 600)
         :return: None
         """
-        pass
+        for file_path in self.file_list:
+            X = self._read_file(file_path, 0)  # TODO: optimization, don't open file twice
+            Y = self._read_file(file_path, y)
+            fig = plt.figure()
+            ax = plt.subplot(111)
+            ax.plot(X, Y)
+            ax.set_xlabel(xc)
+            ax.set_ylabel(yc)
+            ax.set_title(title)
+            file_name = os.path.split(file_path)[-1]
+            file_name, extension = os.path.splitext(file_name)
+            fig.savefig(path+file_name+title+extension, figsize=size)
+
+    def get_index(self):
+        """
+        Return the current index
+        """
+        return self.index
+
+    def get_file_name(self, index):
+        """
+        Return a string of the file name at the index
+        File name only, no extension or path
+        """
+        result = os.path.split(self.file_list[index])[-1]
+        filename, extension = os.path.splitext(result)
+        return filename

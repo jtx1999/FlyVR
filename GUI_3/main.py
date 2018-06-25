@@ -444,7 +444,7 @@ def plot_select_box(selected=True, *args):
 
 
 labelframe_plot = LabelFrame(tab_analysis, text="Plotting")
-labelframe_plot.pack(fill="both", expand="no")
+labelframe_plot.pack(fill="both", expand="yes")
 plot_frame_1 = Frame(labelframe_plot)
 plot_frame_1.pack(fill=X)
 
@@ -486,17 +486,26 @@ plot_title_label.grid(column=0, row=0)
 plot_title_text = ttk.Entry(plot_frame_3, width=40, textvariable=plot_title_string)
 plot_title_text.grid(column=1, row=0)
 
+def _set_preview_label():
+    """
+    Sets the label of current preview
+    """
+    plot_preview_label.config(text=plot_helper.get_file_name(plot_helper.get_index()))
+
 
 def preview():
-    #if "plot_helper" not in globals():  # The file is not selected
-    #    return
-    print("plotting")
+    if "plot_helper" not in globals():  # The file is not selected
+        return
     plot_helper.plot(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(), plot_title_string.get())
+    _set_preview_label()
 
 
 def prev_plot():
+    if "plot_helper" not in globals():  # The file is not selected
+        return
     plot_helper.plot_prev(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
                           plot_title_string.get())
+    _set_preview_label()
     if not plot_helper.has_prev():
         plot_prev_button.config(state=DISABLED)
     if plot_helper.has_next():
@@ -504,25 +513,38 @@ def prev_plot():
 
 
 def next_plot():
+    if "plot_helper" not in globals():  # The file is not selected
+        return
     plot_helper.plot_next(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
                           plot_title_string.get())
+    _set_preview_label()
     if not plot_helper.has_next():
         plot_next_button.config(state=DISABLED)
     if plot_helper.has_prev():
         plot_prev_button.config(state=NORMAL)
 
 
+def save_plot():
+    path = filedialog.askdirectory(title="Save in folder")
+    fig_size = (plot_size_width_string.get(), plot_size_height_string.get())
+    plot_helper.save_file(path, extension=plot_format_string.get(), size=fig_size,
+                          x=0, y=18, xc=plot_axisx_caption_string.get(), yc=plot_axisy_caption_string.get(),
+                          title=plot_title_string.get())
+
+
 plot_frame_4 = Frame(labelframe_plot)
 plot_frame_4.pack(fill=X)
 plot_preview_button = ttk.Button(plot_frame_4, text="Preview", command=preview)
 plot_preview_button.pack(side=LEFT)
+plot_preview_label = ttk.Label(plot_frame_4)
+plot_preview_label.pack(side=LEFT)
 plot_next_button = ttk.Button(plot_frame_4, text="Next", command=next_plot)
 plot_next_button.pack(side=RIGHT)
 plot_prev_button = ttk.Button(plot_frame_4, text="Prev", command=prev_plot, state=DISABLED)
 plot_prev_button.pack(side=RIGHT)
 
 plot_frame_5 = Frame(labelframe_plot, width=400, height=300)
-plot_frame_5.pack(pady=5)
+plot_frame_5.pack(pady=5, fill=BOTH, expand='yes')
 #canvas = Canvas(plot_frame_5, width=400, height=300)
 #canvas.pack()
 
@@ -536,12 +558,12 @@ plot_size_height_string.set("600")
 plot_frame_6 = Frame(labelframe_plot)
 plot_frame_6.pack(fill=X)
 plot_format_label = ttk.Label(plot_frame_6, text="Format:")
-plot_format_drop = ttk.OptionMenu(plot_frame_6, plot_format_string, "png", "png", "jpg")
+plot_format_drop = ttk.OptionMenu(plot_frame_6, plot_format_string, "png", "png", "pdf", "eg")
 plot_size_label = ttk.Label(plot_frame_6, text="Size:")
 plot_size_text_1 = ttk.Entry(plot_frame_6, width=6, textvariable=plot_size_width_string)
 plot_size_label_2 = ttk.Label(plot_frame_6, text="x")
 plot_size_text_2 = ttk.Entry(plot_frame_6, width=6, textvariable=plot_size_height_string)
-plot_export_button = ttk.Button(plot_frame_6, text="Export plots...")
+plot_export_button = ttk.Button(plot_frame_6, text="Export plots...", command=save_plot)
 plot_export_button.pack(side=RIGHT)
 plot_size_text_2.pack(side=RIGHT)
 plot_size_label_2.pack(side=RIGHT)
@@ -551,8 +573,8 @@ plot_format_drop.pack(side=RIGHT)
 plot_format_label.pack(side=RIGHT)
 
 
-labelframe_export = LabelFrame(tab_analysis, text="Export to Excel")
-labelframe_export.pack(fill="both", expand="yes")
+labelframe_export = LabelFrame(tab_analysis, text="Export to Excel", width=600, height=50)
+labelframe_export.pack(side=BOTTOM, fill=BOTH)
 
 
 
