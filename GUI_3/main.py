@@ -325,6 +325,23 @@ time_unit_label.grid(column=3, row=0)
 
 filelist = []
 
+
+def _selectFileHelper(filestr):
+    """
+    A helper function for file selection, used in both file and folder selection
+
+    Sets the state of prev and next button
+    """
+    select_file_textbox.config(state=NORMAL)
+    select_file_textbox.delete("1.0", END)
+    select_file_textbox.insert("1.0", filestr)
+    select_file_textbox.config(state=DISABLED)
+    global plot_helper
+    plot_helper = PlotHelper(plot_frame_5, filelist)
+    if not plot_helper.has_next():
+        plot_next_button.config(state=DISABLED)
+
+
 def selectcsvFile():
     """
     Function to open a file chooser and browse files
@@ -334,17 +351,12 @@ def selectcsvFile():
     if path == "":
         return
     global filelist
-    global plot_helper
     filelist = []
     filestr = ""
     for filename in window.tk.splitlist(path):
         filelist.append(filename)
         filestr += (filename+"\n")
-    select_file_textbox.config(state=NORMAL)
-    select_file_textbox.delete("1.0", END)
-    select_file_textbox.insert("1.0", filestr)
-    select_file_textbox.config(state=DISABLED)
-    plot_helper = PlotHelper(plot_frame_5, filelist)
+    _selectFileHelper(filestr)
 
 
 def selectFolder():
@@ -356,18 +368,13 @@ def selectFolder():
     if path == "":
         return
     global filelist
-    global plot_helper
     filelist = []
     filestr = ""
     for filename in os.listdir(path):
         if ".csv" in filename:
             filelist.append(path+filename)
             filestr += (path+filename+"\n")
-    select_file_textbox.config(state=NORMAL)
-    select_file_textbox.delete("1.0", END)
-    select_file_textbox.insert("1.0", filestr)
-    select_file_textbox.config(state=DISABLED)
-    plot_helper = PlotHelper(plot_frame_5, filelist)
+    _selectFileHelper(filestr)
 
 
 labelframe_select = LabelFrame(tab_analysis, text="Import CSV files")
