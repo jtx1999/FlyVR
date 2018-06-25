@@ -8,6 +8,7 @@ import subprocess
 from subprocess import PIPE
 import time
 import os
+from plot_helper import PlotHelper
 
 
 window = Tk()
@@ -324,7 +325,6 @@ time_unit_label.grid(column=3, row=0)
 
 filelist = []
 
-
 def selectcsvFile():
     """
     Function to open a file chooser and browse files
@@ -334,6 +334,7 @@ def selectcsvFile():
     if path == "":
         return
     global filelist
+    global plot_helper
     filelist = []
     filestr = ""
     for filename in window.tk.splitlist(path):
@@ -343,6 +344,7 @@ def selectcsvFile():
     select_file_textbox.delete("1.0", END)
     select_file_textbox.insert("1.0", filestr)
     select_file_textbox.config(state=DISABLED)
+    plot_helper = PlotHelper(plot_frame_5, filelist)
 
 
 def selectFolder():
@@ -354,6 +356,7 @@ def selectFolder():
     if path == "":
         return
     global filelist
+    global plot_helper
     filelist = []
     filestr = ""
     for filename in os.listdir(path):
@@ -364,6 +367,7 @@ def selectFolder():
     select_file_textbox.delete("1.0", END)
     select_file_textbox.insert("1.0", filestr)
     select_file_textbox.config(state=DISABLED)
+    plot_helper = PlotHelper(plot_frame_5, filelist)
 
 
 labelframe_select = LabelFrame(tab_analysis, text="Import CSV files")
@@ -475,19 +479,45 @@ plot_title_label.grid(column=0, row=0)
 plot_title_text = ttk.Entry(plot_frame_3, width=40, textvariable=plot_title_string)
 plot_title_text.grid(column=1, row=0)
 
+
+def preview():
+    #if "plot_helper" not in globals():  # The file is not selected
+    #    return
+    print("plotting")
+    plot_helper.plot(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(), plot_title_string.get())
+
+
+def prev_plot():
+    plot_helper.plot_prev(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
+                          plot_title_string.get())
+    if not plot_helper.has_prev():
+        plot_prev_button.config(state=DISABLED)
+    if plot_helper.has_next():
+        plot_next_button.config(state=NORMAL)
+
+
+def next_plot():
+    plot_helper.plot_next(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
+                          plot_title_string.get())
+    if not plot_helper.has_next():
+        plot_next_button.config(state=DISABLED)
+    if plot_helper.has_prev():
+        plot_prev_button.config(state=NORMAL)
+
+
 plot_frame_4 = Frame(labelframe_plot)
 plot_frame_4.pack(fill=X)
-plot_preview_button = ttk.Button(plot_frame_4, text="Preview")
+plot_preview_button = ttk.Button(plot_frame_4, text="Preview", command=preview)
 plot_preview_button.pack(side=LEFT)
-plot_next_button = ttk.Button(plot_frame_4, text="Next")
+plot_next_button = ttk.Button(plot_frame_4, text="Next", command=next_plot)
 plot_next_button.pack(side=RIGHT)
-plot_prev_button = ttk.Button(plot_frame_4, text="Prev")
+plot_prev_button = ttk.Button(plot_frame_4, text="Prev", command=prev_plot, state=DISABLED)
 plot_prev_button.pack(side=RIGHT)
 
-plot_frame_5 = Frame(labelframe_plot)
-plot_frame_5.pack(fill=X)
-canvas = Canvas(plot_frame_5, width=400, height=300)
-canvas.pack()
+plot_frame_5 = Frame(labelframe_plot, width=400, height=300)
+plot_frame_5.pack(pady=5)
+#canvas = Canvas(plot_frame_5, width=400, height=300)
+#canvas.pack()
 
 
 plot_format_string = StringVar()
