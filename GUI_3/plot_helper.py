@@ -114,8 +114,8 @@ class PlotHelper(object):
             ax.set_ylabel(yc)
             ax.set_title(title)
             file_name = os.path.split(file_path)[-1]
-            file_name, extension = os.path.splitext(file_name)
-            fig.savefig(path+file_name+title+extension, figsize=size)
+            file_name, _ = os.path.splitext(file_name)
+            fig.savefig(path+"/"+file_name+"-"+title+"."+extension, figsize=size)
 
     def get_index(self):
         """
