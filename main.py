@@ -13,7 +13,7 @@ from plot_helper import PlotHelper
 
 window = Tk()
 window.title("FlyVR")
-window.iconbitmap("C:\\Users\\YLab\\Documents\\FlyVR\\fly-shape.ico")
+window.iconbitmap("fly-shape.ico")
 window.geometry("600x800")
 
 tab_control = ttk.Notebook(window)
