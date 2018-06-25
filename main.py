@@ -222,6 +222,8 @@ def setArduinoPort():
     """
     Set the serial port for Arduino
     """
+    global arduino
+    global serial_set
     try:
         arduino = ArduinoControl(port=Arduino_port_string.get())
         serial_set = True
