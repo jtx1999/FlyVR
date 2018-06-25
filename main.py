@@ -9,6 +9,7 @@ from subprocess import PIPE
 import time
 import os
 from plot_helper import PlotHelper
+import configparser
 
 
 window = Tk()
@@ -587,6 +588,9 @@ def loadConfig(*args):
     """
     Load the configuration of the program
     """
+    Config = configparser.ConfigParser()
+    path = filedialog.askopenfilename(title="Open config file", filetypes=(("INI files", "*.ini"), ("All files", "*.*")))
+    Config.read(path)
     pass  # TODO: Load config
 
 
