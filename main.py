@@ -169,7 +169,7 @@ def startVizard(*args):
     """
     if (isProperFile(Vizard_path_string.get(), "exe")) and \
             (isProperFile(Vizard_script_string.get(), "py")):  # Vizard is enabled
-        subprocess.Popen(["python", "C:\\Users\\YLab\\Documents\\FlyVR\\GUI_3\\StartVizard.py",
+        subprocess.Popen(["python", "StartVizard.py",
                           Vizard_path_string.get(), Vizard_script_string.get()], shell=True)
 
 
@@ -270,9 +270,9 @@ def startExperiment():
             arduino.init_camera()
         else:  # Try to set arduino port but failed
             return
-    if Vizard_state.get():  # Vizard is enabled
-        subprocess.Popen(["python", "StartVizard.py",
-                          Vizard_path_string.get(), Vizard_script_string.get()], shell=True)
+    #if Vizard_state.get():  # Vizard is enabled
+    #    subprocess.Popen(["python", "StartVizard.py",
+    #                      Vizard_path_string.get(), Vizard_script_string.get()], shell=True)
         # p = subprocess.Popen([Vizard_path_string.get(), Vizard_script_string.get()], shell=True,
         #                      stdout=PIPE, stderr=PIPE)
         # output, error = p.communicate()
@@ -280,6 +280,8 @@ def startExperiment():
         #     messagebox.showerror("Error",
         #                          "Vizard is not configured properly:\n"+output.decode("utf-8")+error.decode("utf-8"))
         #     return
+    if FicTrac_state.get():  # FicTrac is enabled
+        subprocess.Popen([FicTrac_path_string.get(), FicTrac_configPath_string.get()], shell=True)
 
     # TODO: start the experiment
 
@@ -468,7 +470,8 @@ plot_title_string = StringVar()
 plot_axisx_label = ttk.Label(plot_frame_2, text="x-axis:")
 plot_axisy_label = ttk.Label(plot_frame_2, text="y-axis:")
 plot_axisx_drop = ttk.OptionMenu(plot_frame_2, plot_axisx_string, "Time(s)", "Time(s)", "Time(frames)")
-plot_axisy_drop = ttk.OptionMenu(plot_frame_2, plot_axisy_string, "y-axis")
+
+plot_axisy_drop = ttk.OptionMenu(plot_frame_2, plot_axisy_string, "Speed", "Speed", "Turning")
 plot_axisx_caption = ttk.Label(plot_frame_2, text="Caption:")
 plot_axisy_caption = ttk.Label(plot_frame_2, text="Caption:")
 plot_axisx_text = ttk.Entry(plot_frame_2, width=20, textvariable=plot_axisx_caption_string)
