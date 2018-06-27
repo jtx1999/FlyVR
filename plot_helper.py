@@ -72,8 +72,9 @@ class PlotHelper(object):
     def plot(self, x, y, xc, yc, title):
         for widget in self.canvas_frame.winfo_children():
             widget.destroy()
-        X = self._read_file(self.file_list[self.index], 0)  # TODO: optimization, don't open file twice
-        Y = self._read_file(self.file_list[self.index], y)
+        cols = self._read_file(self.file_list[self.index], 0, y)
+        X = cols[0]
+        Y = cols[1]
         fig = Figure(figsize=(4, 3))
         ax = fig.add_axes([0.12, 0.15, 0.8, 0.75])
         ax.plot(X, Y)
@@ -84,16 +85,18 @@ class PlotHelper(object):
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         canvas.show()
 
-    def _read_file(self, path, col):
+    def _read_file(self, path, col1, col2):
         """
         A helper method to read the file for the desired column
         :param path: string, the path of a single file
-        :param col: int, the index of column
+        :param col1: int, the index of column
+        :param col2: int, the index of the second column
         :return: a numpy array
         """
         ds = pd.read_csv(path, header=None).get_values()
-        result = np.array(ds[:, col])
-        return result
+        result1 = np.array(ds[:, col1])
+        result2 = np.array(ds[:, col2])
+        return np.array([result1, result2])
 
     def save_file(self, path, extension, size, x, y, xc, yc, title):
         """
@@ -105,8 +108,9 @@ class PlotHelper(object):
         :return: None
         """
         for file_path in self.file_list:
-            X = self._read_file(file_path, 0)  # TODO: optimization, don't open file twice
-            Y = self._read_file(file_path, y)
+            cols = self._read_file(self.file_list[self.index], 0, y)
+            X = cols[0]
+            Y = cols[1]
             fig = plt.figure()
             ax = plt.subplot(111)
             ax.plot(X, Y)
