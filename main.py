@@ -10,6 +10,7 @@ import time
 import os
 from plot_helper import PlotHelper
 import configparser
+from stopwatch import StopWatch
 
 
 window = Tk()
@@ -258,6 +259,7 @@ Arduino_port_text.grid(column=1, row=1)
 Arduino_port_button = ttk.Button(camera_frame_2, text="Set port", command=setArduinoPort)
 Arduino_port_button.grid(column=2, row=1, padx=5, pady=5)
 
+
 # Experiment
 def startExperiment():
     """
@@ -282,7 +284,7 @@ def startExperiment():
         #     return
     if FicTrac_state.get():  # FicTrac is enabled
         subprocess.Popen([FicTrac_path_string.get(), FicTrac_configPath_string.get()], shell=True)
-
+    timing_sw.start()
     # TODO: start the experiment
 
 
@@ -294,6 +296,7 @@ def stopExperiment():
         arduino.stop_camera()
     if Vizard_state.get():
         pass
+    timing_sw.stop()
     # TODO: stop the experiment
 
 
@@ -309,12 +312,19 @@ experiment_frame_1 = Frame(labelframe_experiment)
 experiment_frame_1.pack(fill=X)
 experiment_frame_2 = Frame(labelframe_experiment)
 experiment_frame_2.pack(fill=X)
+experiment_frame_3 = Frame(labelframe_experiment)
+experiment_frame_3.pack(fill=X)
 
-start_button = ttk.Button(experiment_frame_2, text="Start",
-                      command=startExperiment)
+timing_label = ttk.Label(experiment_frame_2, text="Time:")
+timing_label.pack(side=LEFT, padx=5, pady=5)
+timing_sw = StopWatch(experiment_frame_2, padx=5, pady=5)
+timing_sw.pack(side=LEFT)
+
+start_button = ttk.Button(experiment_frame_3, text="Start",
+                          command=startExperiment)
 start_button.pack(side=LEFT, padx=10, pady=5)
-stop_button = ttk.Button(experiment_frame_2, text="Stop",
-                     command=stopExperiment)
+stop_button = ttk.Button(experiment_frame_3, text="Stop",
+                         command=stopExperiment)
 stop_button.pack(side=LEFT, padx=10, pady=5)
 
 time_label = Label(experiment_frame_1, text="Record for")
@@ -325,7 +335,6 @@ time_dropdown = ttk.OptionMenu(experiment_frame_1, time_unit_string, "frames", "
 time_dropdown.grid(column=2, row=0, padx=5, pady=5)
 time_unit_label = Label(experiment_frame_1, text="* Specify zero to capture until manually stopped")
 time_unit_label.grid(column=3, row=0)
-# TODO: timing
 
 
 filelist = []
@@ -481,6 +490,7 @@ plot_title_label = ttk.Label(plot_frame_3, text="Title:")
 plot_title_label.grid(column=0, row=0)
 plot_title_text = ttk.Entry(plot_frame_3, width=40, textvariable=plot_title_string)
 plot_title_text.grid(column=1, row=0)
+
 
 def _set_preview_label():
     """
