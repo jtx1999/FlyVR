@@ -59,7 +59,12 @@ fig1, ax = plt.subplots()
 ax.plot(result)
 ax.set(xlabel='Time (s)', ylabel='Speed (rad/s)',
        title='Average speed of fruit flies')
-fig1.savefig("_speed-time.png")
+
+ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)
+ax.set_xlim(0, 180)
+ax.set_ylim(0, 3)
+
+fig1.savefig("speed-time.png")
 plt.show()
 
 
