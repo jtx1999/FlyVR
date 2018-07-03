@@ -417,49 +417,31 @@ select_frame_3.grid_columnconfigure(0, weight=1)
 
 SCATTER = 1
 BOX = 2
-plot_type = SCATTER
-
-
-def plot_select_scatter(selected=True, *args):
-    """
-    When the scatter plot button is selected, display scatter plot options,
-    and disable the options of other plots
-    :param selected: true if scatter plot is selected, false otherwise
-    """
-    if selected:
-        plot_type = SCATTER
-        plot_selection_button_1.config(relief=SUNKEN)
-        plot_select_box(False)
-    else:
-        plot_selection_button_1.config(relief=RAISED)
-
-
-def plot_select_box(selected=True, *args):
-    """
-    When the scatter plot button is selected, display scatter plot options,
-    and disable the options of other plots
-    :param selected: true if scatter plot is selected, false otherwise
-    """
-    if selected:
-        plot_type = BOX
-        plot_selection_button_2.config(relief=SUNKEN)
-        plot_select_scatter(False)
-    else:
-        plot_selection_button_2.config(relief=RAISED)
-
 
 labelframe_plot = LabelFrame(tab_analysis, text="Plotting")
 labelframe_plot.pack(fill="both", expand="yes")
 plot_frame_1 = Frame(labelframe_plot)
 plot_frame_1.pack(fill=X)
 
-plot_selection_button_1 = Button(plot_frame_1, text="Scatter Plot", command=plot_select_scatter)
+
+plot_average_selection_int = IntVar()
+
+plot_selection_button_1 = Radiobutton(plot_frame_1, text="Scatter Plot", variable=plot_average_selection_int,
+                                      value=SCATTER, indicatoron=0)
 plot_selection_button_1.grid(column=0, row=0, padx=5, pady=5)
-plot_selection_button_2 = Button(plot_frame_1, text="Box Plot", command=plot_select_box)
+plot_selection_button_2 = Radiobutton(plot_frame_1, text="Box Plot", variable=plot_average_selection_int,
+                                      value=BOX, indicatoron=0)
 plot_selection_button_2.grid(column=1, row=0, padx=5, pady=5)
+
+plot_average_selection_int.set(SCATTER)
 
 plot_frame_2 = Frame(labelframe_plot)
 plot_frame_2.pack(fill=X)
+
+plot_frame_21 = Frame(plot_frame_2)
+plot_frame_21.pack(side=LEFT, fill=X)
+plot_frame_22 = Frame(plot_frame_2)
+plot_frame_22.pack(side=RIGHT, fill=X)
 
 plot_axisx_string = StringVar()
 plot_axisy_string = StringVar()
@@ -467,15 +449,15 @@ plot_axisx_caption_string = StringVar()
 plot_axisy_caption_string = StringVar()
 plot_title_string = StringVar()
 
-plot_axisx_label = ttk.Label(plot_frame_2, text="x-axis:")
-plot_axisy_label = ttk.Label(plot_frame_2, text="y-axis:")
-plot_axisx_drop = ttk.OptionMenu(plot_frame_2, plot_axisx_string, "Time(s)", "Time(s)", "Time(frames)")
+plot_axisx_label = ttk.Label(plot_frame_21, text="x-axis:")
+plot_axisy_label = ttk.Label(plot_frame_21, text="y-axis:")
+plot_axisx_drop = ttk.OptionMenu(plot_frame_21, plot_axisx_string, "Time(s)", "Time(s)", "Time(frames)")
 
-plot_axisy_drop = ttk.OptionMenu(plot_frame_2, plot_axisy_string, "Speed", "Speed", "Turning")
-plot_axisx_caption = ttk.Label(plot_frame_2, text="Caption:")
-plot_axisy_caption = ttk.Label(plot_frame_2, text="Caption:")
-plot_axisx_text = ttk.Entry(plot_frame_2, width=20, textvariable=plot_axisx_caption_string)
-plot_axisy_text = ttk.Entry(plot_frame_2, width=20, textvariable=plot_axisy_caption_string)
+plot_axisy_drop = ttk.OptionMenu(plot_frame_21, plot_axisy_string, "Speed", "Speed", "Turning")
+plot_axisx_caption = ttk.Label(plot_frame_21, text="Caption:")
+plot_axisy_caption = ttk.Label(plot_frame_21, text="Caption:")
+plot_axisx_text = ttk.Entry(plot_frame_21, width=20, textvariable=plot_axisx_caption_string)
+plot_axisy_text = ttk.Entry(plot_frame_21, width=20, textvariable=plot_axisy_caption_string)
 plot_axisx_label.grid(column=0, row=0)
 plot_axisy_label.grid(column=0, row=1)
 plot_axisx_drop.grid(column=1, row=0)
@@ -484,6 +466,14 @@ plot_axisx_caption.grid(column=2, row=0)
 plot_axisy_caption.grid(column=2, row=1)
 plot_axisx_text.grid(column=3, row=0)
 plot_axisy_text.grid(column=3, row=1)
+
+plot_average_selection_int = IntVar()
+plot_average_selection_1 = ttk.Radiobutton(plot_frame_22, text="Plot for individual fly",
+                                           variable=plot_average_selection_int, value=1)
+plot_average_selection_2 = ttk.Radiobutton(plot_frame_22, text="Plot for average of all flies",
+                                           variable=plot_average_selection_int, value=2)
+plot_average_selection_1.pack(anchor=W, padx=5)
+plot_average_selection_2.pack(anchor=W, padx=5)
 
 plot_frame_3 = Frame(labelframe_plot)
 plot_frame_3.pack(fill=X)
