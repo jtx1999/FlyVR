@@ -507,6 +507,7 @@ def _set_preview_label():
 def preview():
     if "plot_helper" not in globals():  # The file is not selected
         return
+    plot_helper.set_average_type(plot_average_selection_int.get())
     plot_helper.plot(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(), plot_title_string.get())
     _set_preview_label()
 
@@ -514,6 +515,7 @@ def preview():
 def prev_plot():
     if "plot_helper" not in globals():  # The file is not selected
         return
+    plot_helper.set_average_type(plot_average_selection_int.get())
     plot_helper.plot_prev(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
                           plot_title_string.get())
     _set_preview_label()
@@ -526,6 +528,7 @@ def prev_plot():
 def next_plot():
     if "plot_helper" not in globals():  # The file is not selected
         return
+    plot_helper.set_average_type(plot_average_selection_int.get())
     plot_helper.plot_next(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
                           plot_title_string.get())
     _set_preview_label()

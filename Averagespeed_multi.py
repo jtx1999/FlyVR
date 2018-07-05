@@ -50,6 +50,7 @@ for arr in table[1:]:
     print(arr.shape)
     table_1 = np.vstack((table_1, arr))
 table_1 = table_1.transpose()
+std = np.std(table_1, axis=1)
 
 result = np.array([])
 for col in table_1:
@@ -60,7 +61,9 @@ ax.plot(result)
 ax.set(xlabel='Time (s)', ylabel='Speed (rad/s)',
        title='Average speed of fruit flies')
 
-ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)
+ax.fill_between(np.arange(0, len(std), 1), result+std, result-std, alpha=0.2)  # Shade the std
+
+ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
 ax.set_xlim(0, 180)
 ax.set_ylim(0, 3)
 

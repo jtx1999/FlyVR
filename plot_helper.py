@@ -46,12 +46,12 @@ class PlotHelper(object):
     def __init__(self, canvas_frame, file_list, average_type=INDIVIDUAL_PLOT):
         self.canvas_frame = canvas_frame
         self.file_list = file_list
-        self.set_average_type(file_list, average_type)
+        self.set_average_type(average_type)
 
-    def set_average_type(self, file_list, average_type=INDIVIDUAL_PLOT):
+    def set_average_type(self, average_type=INDIVIDUAL_PLOT):
         self.average_type = average_type
         if average_type == INDIVIDUAL_PLOT:
-            self.count = len(file_list)
+            self.count = len(self.file_list)
             self.index = 0  # Currently at the first file
         elif average_type == AVERAGE_PLOT:
             self.count = 1
@@ -84,15 +84,61 @@ class PlotHelper(object):
     def plot(self, x, y, xc, yc, title):
         for widget in self.canvas_frame.winfo_children():
             widget.destroy()
-        cols = self._read_file(self.file_list[self.index], 0, y)
-        X = cols[0]
-        Y = cols[1]
+
         fig = Figure(figsize=(4, 3))
         ax = fig.add_axes([0.12, 0.15, 0.8, 0.75])
-        ax.plot(X, Y)
+        # ax.plot(X, Y)
         ax.set_xlabel(xc)
         ax.set_ylabel(yc)
         ax.set_title(title)
+        result = np.ndarray([0])
+        if self.average_type == INDIVIDUAL_PLOT:
+            cols = self._read_file(self.file_list[self.index], x, y)
+            X = cols[0]
+            Y = cols[1]
+            for i in range(len(Y)):
+                if i % 30 == FPS - 1:
+                    count = 0
+                    for j in range(i - FPS + 1, i):
+                        count += Y[j]
+                    result = np.append(result, count)
+            ax.plot(np.arange(len(result)), result)
+        elif self.average_type == AVERAGE_PLOT:
+            table = []
+            min_length = 0
+
+            for filename in self.file_list:
+                cols = self._read_file(filename, x, y)
+                Y = cols[1]
+
+                result = np.array([])
+                for i in range(len(Y)):
+                    if i % 30 == FPS - 1:
+                        count = 0
+                        for j in range(i - FPS + 1, i):
+                            count += Y[j]
+                        result = np.append(result, count)
+                if (min_length == 0) or (len(result) < min_length):
+                    min_length = len(result)
+                table.append(result)
+
+            table_1 = np.array([table[0][:min_length]])
+            for arr in table[1:]:
+                arr = arr[:min_length]
+                table_1 = np.vstack((table_1, arr))
+            table_1 = table_1.transpose()
+            std = np.std(table_1, axis=1)
+            result = np.array([])
+            for col in table_1:
+                result = np.append(result, np.average(col))
+            ax.plot(np.arange(len(result)), result)
+
+            ax.fill_between(np.arange(0, len(std), 1), result + std, result - std, alpha=0.2)  # Shade the std
+
+            ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
+            ax.set_xlim(0, 180)
+            ax.set_ylim(0, 3)
+
         canvas = FigureCanvasTkAgg(fig, master=self.canvas_frame)
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         canvas.show()
@@ -119,19 +165,68 @@ class PlotHelper(object):
         :param size: List or tuple, The size of the image, e.g. (800, 600)
         :return: None
         """
-        for file_path in self.file_list:
-            cols = self._read_file(self.file_list[self.index], 0, y)
-            X = cols[0]
-            Y = cols[1]
+
+        if self.average_type == INDIVIDUAL_PLOT:
+            for file_path in self.file_list:
+                fig = plt.figure()
+                ax = plt.subplot(111)
+                ax.set_xlabel(xc)
+                ax.set_ylabel(yc)
+                ax.set_title(title)
+                result = np.ndarray([0])
+                cols = self._read_file(self.file_list[self.index], x, y)
+                X = cols[0]
+                Y = cols[1]
+                for i in range(len(Y)):
+                    if i % 30 == FPS - 1:
+                        count = 0
+                        for j in range(i - FPS + 1, i):
+                            count += Y[j]
+                        result = np.append(result, count)
+                ax.plot(np.arange(len(result)), result)
+                file_name = os.path.split(file_path)[-1]
+                file_name, _ = os.path.splitext(file_name)
+                fig.savefig(path + "/" + file_name + "-" + title + "." + extension, figsize=size)
+        elif self.average_type == AVERAGE_PLOT:
+            table = []
+            min_length = 0
             fig = plt.figure()
             ax = plt.subplot(111)
-            ax.plot(X, Y)
             ax.set_xlabel(xc)
             ax.set_ylabel(yc)
             ax.set_title(title)
-            file_name = os.path.split(file_path)[-1]
-            file_name, _ = os.path.splitext(file_name)
-            fig.savefig(path+"/"+file_name+"-"+title+"."+extension, figsize=size)
+            for filename in self.file_list:
+                cols = self._read_file(filename, x, y)
+                Y = cols[1]
+
+                result = np.array([])
+                for i in range(len(Y)):
+                    if i % 30 == FPS - 1:
+                        count = 0
+                        for j in range(i - FPS + 1, i):
+                            count += Y[j]
+                        result = np.append(result, count)
+                if (min_length == 0) or (len(result) < min_length):
+                    min_length = len(result)
+                table.append(result)
+
+            table_1 = np.array([table[0][:min_length]])
+            for arr in table[1:]:
+                arr = arr[:min_length]
+                table_1 = np.vstack((table_1, arr))
+            table_1 = table_1.transpose()
+            std = np.std(table_1, axis=1)
+            result = np.array([])
+            for col in table_1:
+                result = np.append(result, np.average(col))
+            ax.plot(np.arange(len(result)), result)
+
+            ax.fill_between(np.arange(0, len(std), 1), result + std, result - std, alpha=0.2)  # Shade the std
+
+            ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
+            ax.set_xlim(0, 180)
+            ax.set_ylim(0, 3)
+            fig.savefig(path + "/" + "Average Plot" + "-" + title + "." + extension, figsize=size)
 
     def get_index(self):
         """
