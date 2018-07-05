@@ -8,7 +8,7 @@ import subprocess
 from subprocess import PIPE
 import time
 import os
-from plot_helper import PlotHelper
+from plot_helper import *
 import configparser
 from stopwatch import StopWatch
 
@@ -351,7 +351,7 @@ def _selectFileHelper(filestr):
     select_file_textbox.insert("1.0", filestr)
     select_file_textbox.config(state=DISABLED)
     global plot_helper
-    plot_helper = PlotHelper(plot_frame_5, filelist)
+    plot_helper = PlotHelper(plot_frame_5, filelist, average_type=plot_average_selection_int.get())
     if not plot_helper.has_next():
         plot_next_button.config(state=DISABLED)
 
@@ -386,8 +386,8 @@ def selectFolder():
     filestr = ""
     for filename in os.listdir(path):
         if ".csv" in filename:
-            filelist.append(path+filename)
-            filestr += (path+filename+"\n")
+            filelist.append(path+"/"+filename)
+            filestr += (path+"/"+filename+"\n")
     _selectFileHelper(filestr)
 
 
@@ -478,11 +478,13 @@ plot_axisy_text.grid(column=3, row=1)
 
 plot_average_selection_int = IntVar()
 plot_average_selection_1 = ttk.Radiobutton(plot_frame_22, text="Plot for individual fly",
-                                           variable=plot_average_selection_int, value=1)
+                                           variable=plot_average_selection_int, value=INDIVIDUAL_PLOT)
 plot_average_selection_2 = ttk.Radiobutton(plot_frame_22, text="Plot for average of all flies",
-                                           variable=plot_average_selection_int, value=2)
+                                           variable=plot_average_selection_int, value=AVERAGE_PLOT)
 plot_average_selection_1.pack(anchor=W, padx=5)
 plot_average_selection_2.pack(anchor=W, padx=5)
+plot_average_selection_int.set(INDIVIDUAL_PLOT)
+
 
 plot_frame_3 = Frame(labelframe_plot)
 plot_frame_3.pack(fill=X)
@@ -496,7 +498,10 @@ def _set_preview_label():
     """
     Sets the label of current preview
     """
-    plot_preview_label.config(text=plot_helper.get_file_name(plot_helper.get_index()))
+    if plot_average_selection_int.get() == INDIVIDUAL_PLOT:
+        plot_preview_label.config(text=plot_helper.get_file_name(plot_helper.get_index()))
+    elif plot_average_selection_int.get() == AVERAGE_PLOT:
+        plot_preview_label.config(text="Average of all flies")
 
 
 def preview():

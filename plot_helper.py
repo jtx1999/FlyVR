@@ -34,16 +34,28 @@ INDEX_DICT = {
     "sequence": 22
 }
 
+INDIVIDUAL_PLOT = 1
+AVERAGE_PLOT = 2
+FPS = 30
+
 
 class PlotHelper(object):
     """
     Class to help plot the graph, with prev and next button on the tk canvas
     """
-    def __init__(self, canvas_frame, file_list):
+    def __init__(self, canvas_frame, file_list, average_type=INDIVIDUAL_PLOT):
         self.canvas_frame = canvas_frame
         self.file_list = file_list
-        self.count = len(file_list)
-        self.index = 0  # Currently at the first file
+        self.set_average_type(file_list, average_type)
+
+    def set_average_type(self, file_list, average_type=INDIVIDUAL_PLOT):
+        self.average_type = average_type
+        if average_type == INDIVIDUAL_PLOT:
+            self.count = len(file_list)
+            self.index = 0  # Currently at the first file
+        elif average_type == AVERAGE_PLOT:
+            self.count = 1
+            self.index = 0
 
     def has_next(self):
         """
