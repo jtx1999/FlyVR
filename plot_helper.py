@@ -8,6 +8,11 @@ import numpy as np
 import os
 import tkinter as tk
 
+INDEX_SHORT_DICT = {
+    "Speed": 18,
+    "Turning": 16
+}
+
 INDEX_DICT = {
     "frame": 0,
     "delta_rotation_cam_x": 1,
@@ -46,13 +51,13 @@ class PlotHelper(object):
     def __init__(self, canvas_frame, file_list, average_type=INDIVIDUAL_PLOT):
         self.canvas_frame = canvas_frame
         self.file_list = file_list
+        self.index = 0
         self.set_average_type(average_type)
 
     def set_average_type(self, average_type=INDIVIDUAL_PLOT):
         self.average_type = average_type
         if average_type == INDIVIDUAL_PLOT:
             self.count = len(self.file_list)
-            self.index = 0  # Currently at the first file
         elif average_type == AVERAGE_PLOT:
             self.count = 1
             self.index = 0
@@ -84,24 +89,17 @@ class PlotHelper(object):
     def plot(self, x, y, xc, yc, title):
         for widget in self.canvas_frame.winfo_children():
             widget.destroy()
-
         fig = Figure(figsize=(4, 3))
         ax = fig.add_axes([0.12, 0.15, 0.8, 0.75])
-        # ax.plot(X, Y)
         ax.set_xlabel(xc)
         ax.set_ylabel(yc)
         ax.set_title(title)
-        result = np.ndarray([0])
+
         if self.average_type == INDIVIDUAL_PLOT:
             cols = self._read_file(self.file_list[self.index], x, y)
             X = cols[0]
             Y = cols[1]
-            for i in range(len(Y)):
-                if i % 30 == FPS - 1:
-                    count = 0
-                    for j in range(i - FPS + 1, i):
-                        count += Y[j]
-                    result = np.append(result, count)
+            result = self._average_helper(Y, y)
             ax.plot(np.arange(len(result)), result)
         elif self.average_type == AVERAGE_PLOT:
             table = []
@@ -110,14 +108,7 @@ class PlotHelper(object):
             for filename in self.file_list:
                 cols = self._read_file(filename, x, y)
                 Y = cols[1]
-
-                result = np.array([])
-                for i in range(len(Y)):
-                    if i % 30 == FPS - 1:
-                        count = 0
-                        for j in range(i - FPS + 1, i):
-                            count += Y[j]
-                        result = np.append(result, count)
+                result = self._average_helper(Y, y)
                 if (min_length == 0) or (len(result) < min_length):
                     min_length = len(result)
                 table.append(result)
@@ -134,14 +125,19 @@ class PlotHelper(object):
             ax.plot(np.arange(len(result)), result)
 
             ax.fill_between(np.arange(0, len(std), 1), result + std, result - std, alpha=0.2)  # Shade the std
-
-            ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
-            ax.set_xlim(0, 180)
-            ax.set_ylim(0, 3)
+            if y == 18:
+                ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
+                ax.set_xlim(0, 180)
+                ax.set_ylim(0, 3)
+            elif y == 16:  # The plot for turning
+                ax.fill([60, 120, 120, 60], [-0.3, -0.3, 0.3, 0.3], 'b', alpha=0.2)
+                ax.set_xlim(0, 180)
+                ax.set_ylim(-0.3, 0.3)
 
         canvas = FigureCanvasTkAgg(fig, master=self.canvas_frame)
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         canvas.show()
+        print("Done plotting")
 
     def _read_file(self, path, col1, col2):
         """
@@ -177,12 +173,7 @@ class PlotHelper(object):
                 cols = self._read_file(self.file_list[self.index], x, y)
                 X = cols[0]
                 Y = cols[1]
-                for i in range(len(Y)):
-                    if i % 30 == FPS - 1:
-                        count = 0
-                        for j in range(i - FPS + 1, i):
-                            count += Y[j]
-                        result = np.append(result, count)
+                result = self._average_helper(Y, y)
                 ax.plot(np.arange(len(result)), result)
                 file_name = os.path.split(file_path)[-1]
                 file_name, _ = os.path.splitext(file_name)
@@ -198,14 +189,7 @@ class PlotHelper(object):
             for filename in self.file_list:
                 cols = self._read_file(filename, x, y)
                 Y = cols[1]
-
-                result = np.array([])
-                for i in range(len(Y)):
-                    if i % 30 == FPS - 1:
-                        count = 0
-                        for j in range(i - FPS + 1, i):
-                            count += Y[j]
-                        result = np.append(result, count)
+                result = self._average_helper(Y, y)
                 if (min_length == 0) or (len(result) < min_length):
                     min_length = len(result)
                 table.append(result)
@@ -222,10 +206,14 @@ class PlotHelper(object):
             ax.plot(np.arange(len(result)), result)
 
             ax.fill_between(np.arange(0, len(std), 1), result + std, result - std, alpha=0.2)  # Shade the std
-
-            ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
-            ax.set_xlim(0, 180)
-            ax.set_ylim(0, 3)
+            if y == 18:  # The plot for speed
+                ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
+                ax.set_xlim(0, 180)
+                ax.set_ylim(0, 3)
+            elif y == 16:  # The plot for turning
+                ax.fill([60, 120, 120, 60], [-0.3, -0.3, 0.3, 0.3], 'b', alpha=0.2)
+                ax.set_xlim(0, 180)
+                ax.set_ylim(-0.3, 0.3)
             fig.savefig(path + "/" + "Average Plot" + "-" + title + "." + extension, figsize=size)
 
     def get_index(self):
@@ -242,3 +230,24 @@ class PlotHelper(object):
         result = os.path.split(self.file_list[index])[-1]
         filename, extension = os.path.splitext(result)
         return filename
+
+    def _average_helper(self, Y, y):
+        """
+        :param Y: The read col
+        :param y: the col number
+        :return: A numpy array of averaged col
+        """
+        result = np.ndarray([0])
+        for i in range(len(Y)):
+            if i % 30 == FPS - 1:
+                count = 0
+                for j in range(i - FPS + 1, i):
+                    if y == 16:  # Turning
+                        count += (Y[j + 1] - Y[j])
+                    else:
+                        count += Y[j]
+                if y == 16:  # Turning
+                    result = np.append(result, count / FPS)
+                else:
+                    result = np.append(result, count)
+        return result

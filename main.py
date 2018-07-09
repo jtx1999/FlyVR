@@ -12,10 +12,9 @@ from plot_helper import *
 import configparser
 from stopwatch import StopWatch
 
-
 window = Tk()
 window.title("FlyVR")
-window.iconbitmap("fly-shape.ico")
+window.iconbitmap("C:\\Users\\YLab\\Documents\\FlyVR\\fly-shape.ico")
 window.geometry("600x800")
 
 tab_control = ttk.Notebook(window)
@@ -460,7 +459,7 @@ plot_title_string = StringVar()
 
 plot_axisx_label = ttk.Label(plot_frame_21, text="x-axis:")
 plot_axisy_label = ttk.Label(plot_frame_21, text="y-axis:")
-plot_axisx_drop = ttk.OptionMenu(plot_frame_21, plot_axisx_string, "Time(s)", "Time(s)", "Time(frames)")
+plot_axisx_drop = ttk.OptionMenu(plot_frame_21, plot_axisx_string, "Time(s)", "Time(s)", "Time(frames) (Not functioning)")
 
 plot_axisy_drop = ttk.OptionMenu(plot_frame_21, plot_axisy_string, "Speed", "Speed", "Turning")
 plot_axisx_caption = ttk.Label(plot_frame_21, text="Caption:")
@@ -507,16 +506,26 @@ def _set_preview_label():
 def preview():
     if "plot_helper" not in globals():  # The file is not selected
         return
+    col = INDEX_SHORT_DICT[plot_axisy_string.get()]  # Get which col to use based on user selection
     plot_helper.set_average_type(plot_average_selection_int.get())
-    plot_helper.plot(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(), plot_title_string.get())
+    plot_helper.plot(0, col, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(), plot_title_string.get())
     _set_preview_label()
+    if plot_helper.has_next():
+        plot_next_button.config(state=NORMAL)
+    else:
+        plot_next_button.config(state=DISABLED)
+    if plot_helper.has_prev():
+        plot_prev_button.config(state=NORMAL)
+    else:
+        plot_prev_button.config(state=DISABLED)
 
 
 def prev_plot():
     if "plot_helper" not in globals():  # The file is not selected
         return
+    col = INDEX_SHORT_DICT[plot_axisy_string.get()]
     plot_helper.set_average_type(plot_average_selection_int.get())
-    plot_helper.plot_prev(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
+    plot_helper.plot_prev(0, col, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
                           plot_title_string.get())
     _set_preview_label()
     if not plot_helper.has_prev():
@@ -528,8 +537,9 @@ def prev_plot():
 def next_plot():
     if "plot_helper" not in globals():  # The file is not selected
         return
+    col = INDEX_SHORT_DICT[plot_axisy_string.get()]
     plot_helper.set_average_type(plot_average_selection_int.get())
-    plot_helper.plot_next(0, 18, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
+    plot_helper.plot_next(0, col, plot_axisx_caption_string.get(), plot_axisy_caption_string.get(),
                           plot_title_string.get())
     _set_preview_label()
     if not plot_helper.has_next():
@@ -542,9 +552,10 @@ def save_plot():
     path = filedialog.askdirectory(title="Save in folder")
     if path == "":  # No path is selected
         return
+    col = INDEX_SHORT_DICT[plot_axisy_string.get()]
     fig_size = (plot_size_width_string.get(), plot_size_height_string.get())
     plot_helper.save_file(path, extension=plot_format_string.get(), size=fig_size,
-                          x=0, y=18, xc=plot_axisx_caption_string.get(), yc=plot_axisy_caption_string.get(),
+                          x=0, y=col, xc=plot_axisx_caption_string.get(), yc=plot_axisy_caption_string.get(),
                           title=plot_title_string.get())
 
 
@@ -554,9 +565,9 @@ plot_preview_button = ttk.Button(plot_frame_4, text="Preview", command=preview)
 plot_preview_button.pack(side=LEFT)
 plot_preview_label = ttk.Label(plot_frame_4)
 plot_preview_label.pack(side=LEFT)
-plot_next_button = ttk.Button(plot_frame_4, text="Next", command=next_plot)
+plot_next_button = ttk.Button(plot_frame_4, text="Next", command=next_plot, width=10)
 plot_next_button.pack(side=RIGHT)
-plot_prev_button = ttk.Button(plot_frame_4, text="Prev", command=prev_plot, state=DISABLED)
+plot_prev_button = ttk.Button(plot_frame_4, text="Prev", command=prev_plot, width=10, state=DISABLED)
 plot_prev_button.pack(side=RIGHT)
 
 plot_frame_5 = Frame(labelframe_plot, width=400, height=300)
