@@ -14,7 +14,10 @@ from stopwatch import StopWatch
 
 window = Tk()
 window.title("FlyVR")
-window.iconbitmap("C:\\Users\\YLab\\Documents\\FlyVR\\fly-shape.ico")
+try:
+    window.iconbitmap("C:\\Users\\YLab\\Documents\\FlyVR\\fly-shape.ico")
+except:
+    pass
 window.geometry("600x800")
 
 tab_control = ttk.Notebook(window)
@@ -40,7 +43,9 @@ def isProperFile(path, filetype):
 
 
 FicTrac_path_string = StringVar()
+FicTrac_path_string.set("C:/Users/YLab/Documents/FlyVR/FicTracWin64/FicTrac-PGR.exe")  # Comment this
 FicTrac_configPath_string = StringVar()
+FicTrac_configPath_string.set("C:/Users/YLab/Documents/FlyVR/FicTracWin64/setup-test/config.txt")
 
 
 def setFicTracPath():
@@ -267,10 +272,10 @@ def startExperiment():
     if Arduino_state.get():  # Arduino is enabled
         if not serial_set:  # Try to set arduino if not set yet
             setArduinoPort()
-        if serial_set:  # Serial is set
-            arduino.init_camera()
-        else:  # Try to set arduino port but failed
-            return
+    #     if serial_set:  # Serial is set
+    #         arduino.init_camera()
+    #     else:  # Try to set arduino port but failed
+    #         return
     #if Vizard_state.get():  # Vizard is enabled
     #    subprocess.Popen(["python", "StartVizard.py",
     #                      Vizard_path_string.get(), Vizard_script_string.get()], shell=True)
@@ -282,7 +287,14 @@ def startExperiment():
         #                          "Vizard is not configured properly:\n"+output.decode("utf-8")+error.decode("utf-8"))
         #     return
     if FicTrac_state.get():  # FicTrac is enabled
-        subprocess.Popen([FicTrac_path_string.get(), FicTrac_configPath_string.get()], shell=True)
+        proc = subprocess.Popen([FicTrac_path_string.get(), FicTrac_configPath_string.get()], shell=True, stdout=PIPE)
+        flag = False
+        for c in iter(lambda: proc.stdout.readline(), b''):  # replace '' with b'' for Python 3
+            if b"doing frame" in c and not flag:
+                if Arduino_state.get() and serial_set:  # Serial is set
+                    print("Started")
+                    arduino.init_camera()
+                    flag = True
     timing_sw.start()
     # TODO: start the experiment
 
@@ -423,6 +435,44 @@ select_file_textbox.config(state=DISABLED)
 select_frame_3.grid_rowconfigure(0, weight=1)
 select_frame_3.grid_columnconfigure(0, weight=1)
 
+
+def setupOptionWindow():
+    option_window = Tk()
+    option_window.wm_title("Options")
+    option_window.geometry("400x300")
+    option_window.attributes("-topmost", True)
+
+    x_range_1 = StringVar()
+    x_range_2 = StringVar()
+    y_range_1 = StringVar()
+    y_range_2 = StringVar()
+    x_range_1.set(str(X_RANGE_1))
+    x_range_2.set(str(X_RANGE_2))
+    y_range_1.set(str(Y_RANGE_1))
+    y_range_2.set(str(Y_RANGE_2))
+
+    option_frame_1 = Frame(option_window)
+    option_frame_1.pack(fill=X)
+    range_x_label = ttk.Label(option_frame_1, text="x-axis range:")
+    range_x_entry_1 = ttk.Entry(option_frame_1, textvariable=x_range_1, width=5)
+    range_x_label_2 = ttk.Label(option_frame_1, text="-")
+    range_x_entry_2 = ttk.Entry(option_frame_1, textvariable=x_range_2, width=5)
+    range_y_label = ttk.Label(option_frame_1, text="y-axis range:")
+    range_y_entry_1 = ttk.Entry(option_frame_1, textvariable=y_range_1, width=5)
+    range_y_label_2 = ttk.Label(option_frame_1, text="-")
+    range_y_entry_2 = ttk.Entry(option_frame_1, textvariable=y_range_2, width=5)
+    range_x_label.grid(column=0, row=0, padx=5, pady=5)
+    range_x_entry_1.grid(column=1, row=0)
+    range_x_label_2.grid(column=2, row=0)
+    range_x_entry_2.grid(column=3, row=0)
+    range_y_label.grid(column=0, row=1, padx=5, pady=5)
+    range_y_entry_1.grid(column=1, row=1)
+    range_y_label_2.grid(column=2, row=1)
+    range_y_entry_2.grid(column=3, row=1)
+
+    option_window.mainloop()
+
+
 SCATTER = 1
 BOX = 2
 
@@ -488,10 +538,11 @@ plot_average_selection_int.set(INDIVIDUAL_PLOT)
 plot_frame_3 = Frame(labelframe_plot)
 plot_frame_3.pack(fill=X)
 plot_title_label = ttk.Label(plot_frame_3, text="Title:")
-plot_title_label.grid(column=0, row=0)
+plot_title_label.pack(side=LEFT)
 plot_title_text = ttk.Entry(plot_frame_3, width=40, textvariable=plot_title_string)
-plot_title_text.grid(column=1, row=0)
-
+plot_title_text.pack(side=LEFT)
+plot_option_button = ttk.Button(plot_frame_3, text="Options...", command=setupOptionWindow)
+plot_option_button.pack(side=RIGHT)
 
 def _set_preview_label():
     """
@@ -629,7 +680,10 @@ def About(*args):
     """
     about = Tk()
     about.wm_title("About")
-    about.wm_iconbitmap("fly-shape.ico")
+    try:
+        about.wm_iconbitmap("fly-shape.ico")
+    except:
+        pass
     about_label = Label(about, text="The FlyVR software\nVersion 1.0\nCreated by Tianxing")
     about_label.pack(side=TOP, fill=X, pady=10, padx=50)
     about_button = ttk.Button(about, text="Okay", command=about.destroy)

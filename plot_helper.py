@@ -43,6 +43,16 @@ INDIVIDUAL_PLOT = 1
 AVERAGE_PLOT = 2
 FPS = 30
 
+X_RANGE_1 = 0
+X_RANGE_2 = 180
+Y_RANGE_1 = -0.3
+Y_RANGE_2 = 0.3
+
+DRAW_INTERVAL = True
+LEDINTERVAL_START = 60
+LEDINTERVAL_END = 120
+PULSE_TIME = 1
+
 
 class PlotHelper(object):
     """
@@ -86,6 +96,13 @@ class PlotHelper(object):
         self.index -= 1
         self.plot(x, y, xc, yc, title)
 
+    def _plot_interval(self, ax):
+        if not DRAW_INTERVAL:
+            return
+        for i in range(LEDINTERVAL_START, LEDINTERVAL_END, PULSE_TIME*2):
+            ax.fill([i, i+PULSE_TIME, i+PULSE_TIME, i],
+                    [Y_RANGE_1, Y_RANGE_1, Y_RANGE_2, Y_RANGE_2], 'b', alpha=0.1)
+
     def plot(self, x, y, xc, yc, title):
         for widget in self.canvas_frame.winfo_children():
             widget.destroy()
@@ -127,12 +144,14 @@ class PlotHelper(object):
             ax.fill_between(np.arange(0, len(std), 1), result + std, result - std, alpha=0.2)  # Shade the std
             if y == 18:
                 ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
-                ax.set_xlim(0, 180)
-                ax.set_ylim(0, 3)
+                self._plot_interval(ax)
+                ax.set_xlim(X_RANGE_1, X_RANGE_2)
+                ax.set_ylim(Y_RANGE_1, Y_RANGE_2)
             elif y == 16:  # The plot for turning
                 ax.fill([60, 120, 120, 60], [-0.3, -0.3, 0.3, 0.3], 'b', alpha=0.2)
-                ax.set_xlim(0, 180)
-                ax.set_ylim(-0.3, 0.3)
+                self._plot_interval(ax)
+                ax.set_xlim(X_RANGE_1, X_RANGE_2)
+                ax.set_ylim(Y_RANGE_1, Y_RANGE_2)
 
         canvas = FigureCanvasTkAgg(fig, master=self.canvas_frame)
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
@@ -208,12 +227,14 @@ class PlotHelper(object):
             ax.fill_between(np.arange(0, len(std), 1), result + std, result - std, alpha=0.2)  # Shade the std
             if y == 18:  # The plot for speed
                 ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
-                ax.set_xlim(0, 180)
-                ax.set_ylim(0, 3)
+                self._plot_interval(ax)
+                ax.set_xlim(X_RANGE_1, X_RANGE_2)
+                ax.set_ylim(Y_RANGE_1, Y_RANGE_2)
             elif y == 16:  # The plot for turning
                 ax.fill([60, 120, 120, 60], [-0.3, -0.3, 0.3, 0.3], 'b', alpha=0.2)
-                ax.set_xlim(0, 180)
-                ax.set_ylim(-0.3, 0.3)
+                self._plot_interval(ax)
+                ax.set_xlim(X_RANGE_1, X_RANGE_2)
+                ax.set_ylim(Y_RANGE_1, Y_RANGE_2)
             fig.savefig(path + "/" + "Average Plot" + "-" + title + "." + extension, figsize=size)
 
     def get_index(self):
