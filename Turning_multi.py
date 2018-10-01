@@ -63,9 +63,12 @@ ax.set(xlabel='Time (s)', ylabel='Turning (rad/s)',
 
 ax.fill_between(np.arange(0, len(std), 1), result+std, result-std, alpha=0.2)  # Shade the std
 
-# ax.fill([60, 120, 120, 60], [0, 0, 3, 3], 'b', alpha=0.2)  # Shade the second minute
-# ax.set_xlim(0, 180)
-# ax.set_ylim(0, 3)
+# ax.fill([8, 38, 38, 8], [-3, -3, 3, 3], 'b', alpha=0.2)  # Shade the second minute
+# ax.fill([48, 78, 78, 48], [-3, -3, 3, 3], 'r', alpha=0.2)  # Shade the second minute
+# ax.fill([88, 118, 88, 118], [-3, -3, 3, 3], 'b', alpha=0.2)  # Shade the second minute
+#
+# ax.set_xlim(0, 120)
+# ax.set_ylim(-0.25, 0.25)
 
 fig1.savefig("turning-time.png")
 plt.show()

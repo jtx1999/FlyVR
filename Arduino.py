@@ -1,12 +1,12 @@
 import serial
-
+import time
 
 class ArduinoControl(object):
     """
     Class to control the Arduino board
     """
 
-    def __init__(self, port="COM3", baudrate=9600):
+    def __init__(self, port="COM9", baudrate=9600):
 
         self.ser = serial.Serial(port=port, baudrate=baudrate)
 
@@ -25,4 +25,8 @@ class ArduinoControl(object):
 
 if __name__ == '__main__':
     arduino = ArduinoControl()
-    arduino.init_camera()
+    while True:
+        arduino.init_camera()
+        time.sleep(2)
+        arduino.stop_camera()
+        time.sleep(2)

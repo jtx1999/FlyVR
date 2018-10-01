@@ -11,6 +11,7 @@ import os
 from plot_helper import *
 import configparser
 from stopwatch import StopWatch
+from threading import Thread
 
 window = Tk()
 window.title("FlyVR")
@@ -126,6 +127,7 @@ FicTrac_configOpen_button.grid(column=3, row=2, padx=5, pady=5)
 
 # Viard
 Vizard_path_string = StringVar()
+Vizard_path_string.set("C:/Vizard5/bin/winviz.exe")
 
 
 def setVizardPath():
@@ -138,6 +140,7 @@ def setVizardPath():
 
 
 Vizard_script_string = StringVar()
+Vizard_script_string.set("C:/Users/YLab/Documents/FlyVR/FicTracWin64/setup-test/gallery.py")
 
 
 def setScriptPath():
@@ -264,6 +267,28 @@ Arduino_port_button = ttk.Button(camera_frame_2, text="Set port", command=setArd
 Arduino_port_button.grid(column=2, row=1, padx=5, pady=5)
 
 
+def _startFicTrac():
+    """
+    A helper to start FicTrac, need to be a new thread
+    """
+    proc = subprocess.Popen([FicTrac_path_string.get(), FicTrac_configPath_string.get()], shell=True, stdout=PIPE)
+
+    # while True:
+    #     line = proc.stdout.readline()
+    #     if b"doing frame" in line:
+    #         print("Started")
+    #         break
+    # print("Broken")
+    flag = False
+    for c in iter(lambda: proc.stdout.readline(), b''):  # replace '' with b'' for Python 3
+        print(c.decode()[:-1])  # -1 gets rid of the new lines
+        if not flag and b"doing frame" in c:
+            print("Started FicTrac")
+            if Arduino_state.get() and serial_set:  # Serial is set
+                arduino.init_camera()
+            timing_sw.start()
+            flag = True
+
 # Experiment
 def startExperiment():
     """
@@ -287,15 +312,12 @@ def startExperiment():
         #                          "Vizard is not configured properly:\n"+output.decode("utf-8")+error.decode("utf-8"))
         #     return
     if FicTrac_state.get():  # FicTrac is enabled
-        proc = subprocess.Popen([FicTrac_path_string.get(), FicTrac_configPath_string.get()], shell=True, stdout=PIPE)
-        flag = False
-        for c in iter(lambda: proc.stdout.readline(), b''):  # replace '' with b'' for Python 3
-            if b"doing frame" in c and not flag:
-                if Arduino_state.get() and serial_set:  # Serial is set
-                    print("Started")
-                    arduino.init_camera()
-                    flag = True
-    timing_sw.start()
+        print("Starting FicTrac...")
+        global t
+        t = Thread(target=_startFicTrac)  # Use a thread otherwise will freeze
+        t.daemon = True
+        t.start()
+
     # TODO: start the experiment
 
 
@@ -308,6 +330,8 @@ def stopExperiment():
     if Vizard_state.get():
         pass
     timing_sw.stop()
+
+
     # TODO: stop the experiment
 
 
