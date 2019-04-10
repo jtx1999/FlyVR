@@ -297,10 +297,10 @@ def startExperiment():
     if Arduino_state.get():  # Arduino is enabled
         if not serial_set:  # Try to set arduino if not set yet
             setArduinoPort()
-    #     if serial_set:  # Serial is set
-    #         arduino.init_camera()
-    #     else:  # Try to set arduino port but failed
-    #         return
+        if serial_set and not FicTrac_state.get():  # Serial is set
+            arduino.init_camera()
+        #else:  # Try to set arduino port but failed
+        #    return
     #if Vizard_state.get():  # Vizard is enabled
     #    subprocess.Popen(["python", "StartVizard.py",
     #                      Vizard_path_string.get(), Vizard_script_string.get()], shell=True)
@@ -463,6 +463,7 @@ select_frame_3.grid_columnconfigure(0, weight=1)
 def setupOptionWindow():
     option_window = Tk()
     option_window.wm_title("Options")
+
     option_window.geometry("400x300")
     option_window.attributes("-topmost", True)
 
